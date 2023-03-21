@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon sever.js",
+    "start": "nodemon sever.js -e ejs,js,css,html,jpg,png,scss",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
