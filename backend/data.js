@@ -80,7 +80,7 @@ const data = {
             price: 499,
             countInStock: 99,
             brand: 'Tnalp',
-            rating: '5',
+            rating: '2',
             numReviews: 0,
             description: 'High-quality garden plot from Tnalp',
         },
