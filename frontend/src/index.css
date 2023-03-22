@@ -17,6 +17,7 @@ main {
   flex-wrap: wrap;
   justify-content: center;
 }
+
 .product {
   border: 1px #404040 solid;
   margin: 1rem;
@@ -37,4 +38,12 @@ main {
 
 .rating span {
   color: #ffc800;
+}
+
+.img-large {
+  max-width: 100%;
+}
+
+.product-lg {
+  margin-top: 1rem;
 }

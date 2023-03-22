@@ -6,7 +6,7 @@ const data = {
             category: 'Pot',
             image: '/images/1.png',
             price: 499,
-            countInStock: 99,
+            countInStock: 0,
             brand: 'Tnalp',
             rating: '0',
             numReviews: 0,
