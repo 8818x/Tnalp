@@ -1,6 +1,7 @@
 const data = {
     products: [
         {
+            _id: '1',
             name: 'Garden Pot I',
             slug: 'garden-pot-i',
             category: 'Pot',
@@ -13,6 +14,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
+            _id: '2',
             name: 'Garden Pot II',
             slug: 'garden-pot-ii',
             category: 'Pot',
@@ -25,6 +27,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
+            _id: '3',
             name: 'Garden Pot III',
             slug: 'garden-pot-iii',
             category: 'Pot',
@@ -37,6 +40,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
+            _id: '4',
             name: 'Garden Pot IV',
             slug: 'garden-pot-iv',
             category: 'Pot',
@@ -49,6 +53,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
+            _id: '5',
             name: 'Garden Pot V',
             slug: 'garden-pot-v',
             category: 'Pot',
@@ -61,6 +66,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
+            _id: '6',
             name: 'Garden Pot VI',
             slug: 'garden-pot-vi',
             category: 'Pot',
@@ -69,18 +75,6 @@ const data = {
             countInStock: 99,
             brand: 'Tnalp',
             rating: '0',
-            numReviews: 0,
-            description: 'High-quality garden plot from Tnalp',
-        },
-        {
-            name: 'Garden Pot VII',
-            slug: 'garden-pot-vii',
-            category: 'Pot',
-            image: '/images/6.png',
-            price: 499,
-            countInStock: 99,
-            brand: 'Tnalp',
-            rating: '2',
             numReviews: 0,
             description: 'High-quality garden plot from Tnalp',
         },
