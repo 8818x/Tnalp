@@ -48,8 +48,9 @@ main {
   margin-top: 1rem;
 }
 
-
 .no-thumbnail-border.img-thumbnail {
   height: 80px;
   border: none;
 }
+
+

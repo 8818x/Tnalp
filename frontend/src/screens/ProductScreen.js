@@ -80,7 +80,7 @@ function ProductScreen() {
                         alt={product.name}
                     ></img>
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                     <ListGroup varaint="flush">
                         <ListGroup.Item>
                             <Helmet>
@@ -115,17 +115,19 @@ function ProductScreen() {
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <Row>
-
                                 <Col>Quantity:</Col>
                                 <Col>{product.countInStock} Pcs. Available</Col>
                             </Row>
                         </ListGroup.Item>
                     </ListGroup>
                     {product.countInStock > 0 && (
-                        <ListGroup className='product-lg'>
-                            <div className="d-grid">
-                                <Button onClick={addToCartHandler} varaint="primary">
+                        <ListGroup className='product-lg d-flex' varaint="flush">
+                            <div>
+                                <Button onClick={addToCartHandler} varaint="primary" style={{ marginRight: '0.7rem' }}>
                                     Add to cart
+                                </Button>
+                                <Button onClick={addToCartHandler} varaint="primary">
+                                    Buy now
                                 </Button>
                             </div>
                         </ListGroup>
