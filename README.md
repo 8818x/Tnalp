@@ -12,6 +12,6 @@ E-Commerce Website Project
 8. 2023-03-24 11:17 | Improve Cart and Notice
 9. 2023-03-26 10:02 | Add Cart Screen
 10. 2023-03-26 12:47 | Complete Cart Screen
-11.  
+
 # Problem
 1. Best case ในการเขียนโค้ดต้องเสร็จให้ทันก่อน วันที่ 9 เมษายน

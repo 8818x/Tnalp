@@ -1,7 +1,7 @@
 const data = {
     products: [
         {
-            _id: '1',
+            // _id: '1',
             name: 'Garden Pot I',
             slug: 'garden-pot-i',
             category: 'Pot',
@@ -14,7 +14,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
-            _id: '2',
+            // _id: '2',
             name: 'Garden Pot II',
             slug: 'garden-pot-ii',
             category: 'Pot',
@@ -27,7 +27,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
-            _id: '3',
+            // _id: '3',
             name: 'Garden Pot III',
             slug: 'garden-pot-iii',
             category: 'Pot',
@@ -40,7 +40,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
-            _id: '4',
+            // _id: '4',
             name: 'Garden Pot IV',
             slug: 'garden-pot-iv',
             category: 'Pot',
@@ -53,7 +53,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
-            _id: '5',
+            // _id: '5',
             name: 'Garden Pot V',
             slug: 'garden-pot-v',
             category: 'Pot',
@@ -66,7 +66,7 @@ const data = {
             description: 'High-quality garden plot from Tnalp',
         },
         {
-            _id: '6',
+            // _id: '6',
             name: 'Garden Pot VI',
             slug: 'garden-pot-vi',
             category: 'Pot',

@@ -53,4 +53,6 @@ main {
   border: none;
 }
 
-
+.small-container {
+  max-width: 600px;
+}
