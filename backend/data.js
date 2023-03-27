@@ -1,4 +1,20 @@
+import bcrypt from 'bcryptjs';
+
 const data = {
+    users: [
+        {
+            name: 'Tnalp',
+            email: 'tnalp@tnalp.com',
+            password: bcrypt.hashSync('tnalp'),
+            isAdmin: true,
+        },
+        {
+            name: 'Admin',
+            email: 'admin@tnalp.com',
+            password: bcrypt.hashSync('admin'),
+            isAdmin: true,
+        }
+    ],
     products: [
         {
             name: 'Garden Pot I',
@@ -66,7 +82,7 @@ const data = {
             category: 'Pot',
             image: '/images/6.png',
             price: 499,
-            countInStock: 99,
+            countInStock: 8,
             brand: 'Tnalp',
             rating: '0',
             numReviews: 0,
