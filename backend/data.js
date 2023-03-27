@@ -34,7 +34,7 @@ const data = {
             category: 'Pot',
             image: '/images/2.png',
             price: 499,
-            countInStock: 99,
+            countInStock: 59,
             brand: 'Tnalp',
             rating: '0',
             numReviews: 0,
