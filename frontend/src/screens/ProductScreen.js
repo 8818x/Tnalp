@@ -53,7 +53,7 @@ function ProductScreen() {
 
     const { state, dispatch: ctxDispatch } = useContext(Store);
     const { cart } = state;
-    const addToCartHandler = async () => {
+    const buynowHandler = async () => {
         const exisItem = cart.cartItems.find((x) => x._id === product._id);
         const quantity = exisItem ? exisItem.quantity + 1 : 1;
         const { data } = await axios.get(`/api/products/${product._id}`);
@@ -65,6 +65,18 @@ function ProductScreen() {
             { type: 'CART_ADD_ITEM', payload: { ...product, quantity }, }
         );
         navigate('/cart');
+    };
+    const addToCartHandler = async () => {
+        const exisItem = cart.cartItems.find((x) => x._id === product._id);
+        const quantity = exisItem ? exisItem.quantity + 1 : 1;
+        const { data } = await axios.get(`/api/products/${product._id}`);
+        if (data.countInStock < quantity) {
+            window.alert('Sorry, product is out of stock');
+            return;
+        }
+        ctxDispatch(
+            { type: 'CART_ADD_ITEM', payload: { ...product, quantity }, }
+        );
     };
 
     return loading ? (
@@ -126,7 +138,7 @@ function ProductScreen() {
                                 <Button onClick={addToCartHandler} varaint="primary" style={{ marginRight: '0.7rem' }}>
                                     Add to cart
                                 </Button>
-                                <Button onClick={addToCartHandler} varaint="primary">
+                                <Button onClick={buynowHandler} varaint="primary">
                                     Buy now
                                 </Button>
                             </div>

@@ -3,15 +3,18 @@ import { createContext, useReducer } from "react";
 export const Store = createContext();
 const initialState = {
     userInfo: localStorage.getItem('userInfo')
-    ? JSON.parse(localStorage.getItem('userInfo'))
-    : null,
+        ? JSON.parse(localStorage.getItem('userInfo'))
+        : null,
     cart: {
         shippingAddress: localStorage.getItem('shippingAddress')
-        ? JSON.parse(localStorage.getItem('shippingAddress'))
-        : {},
+            ? JSON.parse(localStorage.getItem('shippingAddress'))
+            : {},
+        paymentMethod: localStorage.getItem('paymentMethod')
+        ? localStorage.getItem('paymentMethod')
+        : '',
         cartItems: localStorage.getItem('cartItems')
-        ? JSON.parse(localStorage.getItem('cartItems'))
-        : [],
+            ? JSON.parse(localStorage.getItem('cartItems'))
+            : [],
     },
 };
 
@@ -27,7 +30,7 @@ function reducer(state, action) {
                     item._id === exisItem._id ? newItem : item
                 )
                 : [...state.cart.cartItems, newItem];
-                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
             return { ...state, cart: { ...state.cart, cartItems } };
         case 'CART_REMOVE_ITEM': {
             const cartItems = state.cart.cartItems.filter(
@@ -45,6 +48,7 @@ function reducer(state, action) {
                 cart: {
                     cartItems: [],
                     shippingAddress: {},
+                    paymentMethod: '',
                 },
             };
         case 'SAVE_SHIPPING_ADDRESS':
@@ -53,6 +57,14 @@ function reducer(state, action) {
                 cart: {
                     ...state.cart,
                     shippingAddress: action.payload,
+                },
+            };
+        case 'SAVE_PAYMENT_METHOD':
+            return {
+                ...state,
+                cart: {
+                    ...state.cart,
+                    paymentMethod: action.payload,
                 },
             };
         default:
