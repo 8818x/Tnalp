@@ -16,7 +16,7 @@ export default function ShippingAddressScreen() {
     const [fullName, setFullName] = useState(shippingAddress.fullName || '');
     const [phoneNumber, setPhoneNumber] = useState(shippingAddress.phoneNumber || '');
     const [address, setAddress] = useState(shippingAddress.address || '');
-    const [area, setArea] = useState(shippingAddress.area || '');
+    const [district, setDistrict] = useState(shippingAddress.district || '');
     const [province, setProvince] = useState(shippingAddress.province || '');
     const [postalCode, setPostalCode] = useState(shippingAddress.postalCode || '');
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function ShippingAddressScreen() {
                 fullName,
                 phoneNumber,
                 address,
-                area,
+                district,
                 province,
                 postalCode,
             },
@@ -43,7 +43,7 @@ export default function ShippingAddressScreen() {
                 fullName,
                 phoneNumber,
                 address,
-                area,
+                district,
                 province,
                 postalCode,
             })
@@ -82,11 +82,11 @@ export default function ShippingAddressScreen() {
                             onChange={(e) => setAddress(e.target.value)}
                             required />
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="area">
-                        <Form.Label>Area/District</Form.Label>
+                    <Form.Group className="mb-3" controlId="district">
+                        <Form.Label>District</Form.Label>
                         <Form.Control
-                            value={area}
-                            onChange={(e) => setArea(e.target.value)}
+                            value={district}
+                            onChange={(e) => setDistrict(e.target.value)}
                             required />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="province">
