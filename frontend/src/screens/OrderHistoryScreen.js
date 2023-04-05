@@ -53,7 +53,7 @@ export default function OrderHistoryScreen() {
             <Helmet>
                 <title>Order History</title>
             </Helmet>
-            <h1>Order History</h1>
+            <h1 className="my-3">Order History</h1>
             {loading ? (
                 <LoadingBox></LoadingBox>
             ) : error ? (
