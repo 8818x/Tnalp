@@ -95,3 +95,7 @@ main {
   background-color: #f08000;
   color: #000000;
 }
+
+.text-bold {
+  font-weight: bold;
+}

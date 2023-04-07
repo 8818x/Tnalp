@@ -23,6 +23,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import { getError } from './utils';
 import axios from 'axios';
 import SearchBox from './components/SearchBox';
+import SearchScreen from './components/SearchScreen';
 
 
 function App() {
@@ -37,7 +38,7 @@ function App() {
     window.location.href = '/signin';
   }
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
-  const [categories, setCategories ] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -69,7 +70,7 @@ function App() {
               </LinkContainer>
               <Navbar.Toggle aria-controls='basic-navbar-nav' />
               <Navbar.Collapse id='basic-navbar-nav'>
-                <SearchBox/>
+                <SearchBox />
                 <Nav className="me-auto w-100 justify-content-end">
                   <Link to="/cart" className='nav-link'>
                     Cart {cart.cartItems.length > 0 && (
@@ -115,8 +116,9 @@ function App() {
             {categories.map((category) => (
               <Nav.Item key={category}>
                 <LinkContainer
-                  to={`/search/category=${category}`}
-                  onClick={() => setSidebarIsOpen(false)}>
+                  to={{ pathname: '/search', search: `?category=${category}` }}
+                  onClick={() => setSidebarIsOpen(false)}
+                >
                   <Nav.Link>{category}</Nav.Link>
                 </LinkContainer>
               </Nav.Item>
@@ -128,6 +130,7 @@ function App() {
             <Routes>
               <Route path="/product/:slug" element={<ProductScreen />}></Route>
               <Route path="/cart" element={<CartScreen />}></Route>
+              <Route path='/search' element={<SearchScreen />}></Route>
               <Route path='/signin' element={<SigninScreen />}></Route>
               <Route path='/signup' element={<SignupScreen />}></Route>
               <Route path='/profile' element={<ProfileScreen />}></Route>
