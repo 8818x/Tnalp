@@ -127,7 +127,6 @@ export default function SearchScreen() {
     }, [dispatch])
 
     const getFilterUrl = (filter) => {
-
         const filterPage = filter.page || page;
         const filterCategory = filter.category || category;
         const filterQuery = filter.query || query;
