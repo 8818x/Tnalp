@@ -5,10 +5,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { Button, Col, Row } from "react-bootstrap";
-import Rating from "./Rating";
-import LoadingBox from "./LoadingBox";
-import MessageBox from "./MessageBox";
-import Product from "./Product";
+import Rating from "../components/Rating";
+import LoadingBox from "../components/LoadingBox";
+import MessageBox from "../components/MessageBox";
+import Product from "../components/Product";
 import { LinkContainer } from "react-router-bootstrap";
 
 const reducer = (state, action) => {
@@ -56,10 +56,6 @@ const prices = [
 
 
 export const ratings = [
-    {
-        name: '5stars',
-        rating: 5,
-    },
     {
         name: '4stars & up',
         rating: 4,

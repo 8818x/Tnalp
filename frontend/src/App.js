@@ -23,7 +23,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import { getError } from './utils';
 import axios from 'axios';
 import SearchBox from './components/SearchBox';
-import SearchScreen from './components/SearchScreen';
+import SearchScreen from './screens/SearchScreen';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import DashboardScreen from './screens/DashboardScreen';
