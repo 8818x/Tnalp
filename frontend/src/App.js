@@ -26,8 +26,9 @@ import SearchBox from './components/SearchBox';
 import SearchScreen from './screens/SearchScreen';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
-import DashboardScreen from './screens/DashboardScreen';
-import ProductListScreen from './screens/ProductListScreen';
+import DashboardScreen from './management_screens/DashboardScreen';
+import ProductListScreen from './management_screens/ProductListScreen';
+import ProductEditScreen from './management_screens/ProductEditScreen';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -102,7 +103,7 @@ function App() {
                     <Link className='nav-link' to='/signin'>Sign In</Link>
                   )}
                   {userInfo && userInfo.isAdmin && (
-                    <NavDropdown title='Admin' id='admin-nav-dropdown'>
+                    <NavDropdown title='Management' id='admin-nav-dropdown'>
                       <LinkContainer to='/admin/dashboard'>
                         <NavDropdown.Item>Dashboard</NavDropdown.Item>
                       </LinkContainer>
@@ -196,6 +197,14 @@ function App() {
                   </AdminRoute>
                 }>
               </Route>
+              <Route
+                path="/admin/product/:id"
+                element={
+                  <AdminRoute>
+                    <ProductEditScreen />
+                  </AdminRoute>
+                }
+              ></Route>
               <Route path="/" element={<HomeScreen />}></Route>
             </Routes>
           </Container>

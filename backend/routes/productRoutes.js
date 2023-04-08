@@ -4,10 +4,36 @@ import expressAsyncHandler from 'express-async-handler';
 import { isAuth, isAdmin } from '../utils.js'
 
 const productRouter = express.Router();
+
 productRouter.get('/', async (req, res) => {
   const products = await Product.find();
   res.send(products);
 });
+
+productRouter.post(
+  '/',
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const newProduct = new Product({
+      name: 'New Product ' + Date.now(),
+      slug: 'slug-' + Date.now(),
+      image: '/images/',
+      price: 0,
+      category: 'New Category',
+      brand: 'New Brand',
+      countInStock: 0,
+      rating: 0,
+      numReviews: 0,
+      description: 'Description',
+    });
+
+    const product = await newProduct.save();
+    res.send({ message: 'Product Created', product });
+
+  })
+);
+
 
 const PAGE_SIZE = 10;
 productRouter.get(

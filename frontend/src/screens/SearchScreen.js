@@ -4,7 +4,7 @@ import { getError } from "../utils";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import Rating from "../components/Rating";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
@@ -49,7 +49,7 @@ const prices = [
         value: '500-999',
     },
     {
-        name: '฿1000 & above',
+        name: '฿1000 & Above',
         value: '1000-9999'
     }
 ];
@@ -57,19 +57,19 @@ const prices = [
 
 export const ratings = [
     {
-        name: '4stars & up',
+        name: '4Stars & Up',
         rating: 4,
     },
     {
-        name: '3stars & up',
+        name: '3Stars & Up',
         rating: 3,
     },
     {
-        name: '2stars & up',
+        name: '2Stars & Up',
         rating: 2,
     },
     {
-        name: '1stars & up',
+        name: '1Stars & Up',
         rating: 1,
     },
 
@@ -131,7 +131,7 @@ export default function SearchScreen() {
         const sortOrder = filter.order || order;
         return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
     }
-
+    
     return (
         <div>
             <Helmet>
@@ -188,17 +188,10 @@ export default function SearchScreen() {
                                     <Link
                                         to={getFilterUrl({ rating: r.rating })}
                                         className={`${r.rating}` === `${rating}` ? 'text-bold' : ''}>
-                                        <Rating caption={' & up'} rating={r.rating}></Rating>
+                                        <Rating caption={' & Up'} rating={r.rating}></Rating>
                                     </Link>
                                 </li>
                             ))}
-                            <li>
-                                <Link
-                                    to={getFilterUrl({ rating: 'all' })}
-                                    className={rating === 'all' ? 'text-bold' : ''}>
-                                    <Rating caption={' & up'} rating={0}></Rating>
-                                </Link>
-                            </li>
                         </ul>
                     </div>
                 </Col>
