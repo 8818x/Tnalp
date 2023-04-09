@@ -92,6 +92,7 @@ export default function UserEditScreen() {
         }
 
     };
+    
     return (
         <Container className="small-container">
             <Helmet>
