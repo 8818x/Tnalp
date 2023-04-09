@@ -70,24 +70,27 @@ export default function UserEditScreen() {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        try {
-            dispatch({ type: 'UPDATE_REQUEST' });
-            await axios.put(
-                `/api/users/${userId}`,
-                { _id: userId, name, email, isAdmin },
-                {
-                    headers: { Authorization: `Bearer ${userInfo.token}` },
-                }
-            );
-            dispatch({
-                type: 'UPDATE_SUCCESS',
-            });
-            toast.success('User updated successfully');
-            navigate('/admin/users');
-        } catch (error) {
-            toast.error(getError(error));
-            dispatch({ type: 'UPDATE_FAIL' });
+        if (window.confirm('Are you sure that request is correct?')) {
+            try {
+                dispatch({ type: 'UPDATE_REQUEST' });
+                await axios.put(
+                    `/api/users/${userId}`,
+                    { _id: userId, name, email, isAdmin },
+                    {
+                        headers: { Authorization: `Bearer ${userInfo.token}` },
+                    }
+                );
+                dispatch({
+                    type: 'UPDATE_SUCCESS',
+                });
+                toast.success('User updated successfully');
+                navigate('/admin/users');
+            } catch (error) {
+                toast.error(getError(error));
+                dispatch({ type: 'UPDATE_FAIL' });
+            }
         }
+
     };
     return (
         <Container className="small-container">
@@ -119,16 +122,14 @@ export default function UserEditScreen() {
                             required
                         />
                     </Form.Group>
-
                     <Form.Check
                         className="mb-3"
                         type="checkbox"
                         id="isAdmin"
-                        label="isAdmin"
+                        label="Administrator"
                         checked={isAdmin}
                         onChange={(e) => setIsAdmin(e.target.checked)}
                     />
-
                     <div className="mb-3">
                         <Button disabled={loadingUpdate} type="submit">
                             Update
