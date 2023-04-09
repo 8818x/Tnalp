@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useContext, useEffect, useReducer } from "react";
-import { Card, Col, ListGroup, Row } from "react-bootstrap";
+import { Button, Card, Col, ListGroup, Row } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from '../components/MessageBox';
 import { Store } from "../Store";
 import { getError } from "../utils";
+import { toast } from 'react-toastify';
 
 function reducer(state, action) {
     switch (action.type) {
@@ -16,6 +17,18 @@ function reducer(state, action) {
             return { ...state, loading: false, order: action.payload, error: '' };
         case 'FETCH_FAIL':
             return { ...state, loading: false, error: action.payload };
+        case 'DELIVER_REQUEST':
+            return { ...state, loadingDeliver: true };
+        case 'DELIVER_SUCCESS':
+            return { ...state, loadingDeliver: false, successDeliver: true };
+        case 'DELIVER_FAIL':
+            return { ...state, loadingDeliver: false };
+        case 'DELIVER_RESET':
+            return {
+                ...state,
+                loadingDeliver: false,
+                successDeliver: false,
+            };
         default:
             return state;
     }
@@ -26,10 +39,12 @@ export default function OrderScreen() {
     const { userInfo } = state;
     const params = useParams();
     const { id: orderId } = params;
-    const [{ loading, error, order }, dispatch] = useReducer(reducer, {
+    const [{ loading, error, order, successPay, loadingPay, loadingDeliver, successDeliver }, dispatch] = useReducer(reducer, {
         loading: true,
         order: {},
         error: '',
+        successPay: false,
+        loadingPay: false,
     });
 
     useEffect(() => {
@@ -41,16 +56,36 @@ export default function OrderScreen() {
                 });
                 dispatch({ type: 'FETCH_SUCCESS', payload: data });
             } catch (err) {
-                dispatch({ type: 'FETCH__FAIL', payload: getError(err)});
+                dispatch({ type: 'FETCH__FAIL', payload: getError(err) });
             }
         }
         if (!userInfo) {
             return navigate('/signin')
         }
-        if (!order._id || (order._id && order._id !== orderId)) {
+        if (!order._id || successPay || successDeliver || (order._id && order._id !== orderId)) {
             fetchOrder();
         }
-    }, [order, userInfo, orderId, navigate])
+        if (successDeliver) {
+            dispatch({ type: 'DELIVER_RESET' });
+        }
+    }, [order, userInfo, orderId, navigate, successPay, successDeliver])
+    async function deliverOrderHandler() {
+        try {
+            dispatch({ type: 'DELIVER_REQUEST' });
+            const { data } = await axios.put(
+                `/api/orders/${order._id}/deliver`,
+                {},
+                {
+                    headers: { authorization: `Bearer ${userInfo.token}` },
+                }
+            );
+            dispatch({ type: 'DELIVER_SUCCESS', payload: data });
+            toast.success('Order is delivered');
+        } catch (err) {
+            toast.error(getError(err));
+            dispatch({ type: 'DELIVER_FAIL' });
+        }
+    }
     return (
         loading ? (
             <LoadingBox></LoadingBox>
@@ -68,7 +103,7 @@ export default function OrderScreen() {
                             <Card.Body>
                                 <Card.Title>Shipping</Card.Title>
                                 <Card.Text>
-                                    <strong>Name:</strong> {order.shippingAddress.fullName} <br/>
+                                    <strong>Name:</strong> {order.shippingAddress.fullName} <br />
                                     <strong>Address: </strong> {order.shippingAddress.address}, {order.shippingAddress.phoneNumber}, {order.shippingAddress.district}, {order.shippingAddress.province}, {order.shippingAddress.postalCode}
                                 </Card.Text>
                                 {order.isDelivered ? (
@@ -105,9 +140,9 @@ export default function OrderScreen() {
                                             <Row>
                                                 <Col md={6}>
                                                     <img
-                                                    src={item.image}
-                                                    alt={item.name}
-                                                    className='img-fluid rounded no-thumbnail-border img-thumbnail'
+                                                        src={item.image}
+                                                        alt={item.name}
+                                                        className='img-fluid rounded no-thumbnail-border img-thumbnail'
                                                     ></img>{' '}
                                                     <Link to={`/product/${item.slug}`}>{item.name}</Link>
                                                 </Col>
@@ -145,6 +180,16 @@ export default function OrderScreen() {
                                             <Col>฿{order.totalPrice.toFixed(2)}</Col>
                                         </Row>
                                     </ListGroup.Item>
+                                    {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                                        <ListGroup.Item>
+                                            {loadingDeliver && <LoadingBox></LoadingBox>}
+                                            <div className="d-grid">
+                                                <Button type="button" onClick={deliverOrderHandler}>
+                                                    Deliver Order
+                                                </Button>
+                                            </div>
+                                        </ListGroup.Item>
+                                    )}
                                 </ListGroup>
                             </Card.Body>
                         </Card>
