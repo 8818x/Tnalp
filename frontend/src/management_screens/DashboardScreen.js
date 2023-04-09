@@ -75,9 +75,10 @@ export default function DashboardScreen() {
                             <Card>
                                 <Card.Body>
                                     <Card.Title>
-                                        {summary.orders && summary.users[0]
+                                        {summary.orders && summary.orders.length > 0 && summary.users[0]
                                             ? summary.orders[0].numOrders
                                             : 0}
+
                                     </Card.Title>
                                     <Card.Text>Orders</Card.Text>
                                 </Card.Body>
@@ -88,9 +89,12 @@ export default function DashboardScreen() {
                                 <Card.Body>
                                     <Card.Title>
                                         ฿
-                                        {summary.orders && summary.users[0]
-                                            ? summary.orders[0].totalSales.toFixed(2)
+                                        {summary.orders && summary.orders.length > 0 && summary.users[0]
+                                            ? summary.orders[0].totalSales !== 0
+                                                ? summary.orders[0].totalSales.toFixed(2)
+                                                : null
                                             : 0}
+
                                     </Card.Title>
                                     <Card.Text>Orders</Card.Text>
                                 </Card.Body>
