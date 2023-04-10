@@ -65,19 +65,22 @@ function App() {
                 : "d-flex flex-column site-container"}>
                 <ToastContainer position='bottom-center' limit={1} />
                 <header className="App-header">
-                    <Navbar bg="dark" variant="dark" expand='lg'>
+                    <Navbar variant='dark' expand='lg'>
                         <Container>
                             <Button
-                                variant='dark'
+                                variant='text'
+                                className='nav-btn'
                                 onClick={() => setSidebarIsOpen(!sidebarIsOpen)}>
-                                <i className='fas fa-bars'></i>
+                                <i className='fas fa-bars' style={{ color: 'white' }}></i>
                             </Button>
                             <LinkContainer to="/">
                                 <Navbar.Brand>Tnalp</Navbar.Brand>
                             </LinkContainer>
                             <Navbar.Toggle aria-controls='basic-navbar-nav' />
                             <Navbar.Collapse id='basic-navbar-nav'>
-                                <SearchBox />
+                                <Container className="container-fluid">
+                                    <SearchBox />
+                                </Container>
                                 <Nav className="me-auto w-100 justify-content-end">
                                     <Link to="/cart" className='nav-link'>
                                         Cart {cart.cartItems.length > 0 && (

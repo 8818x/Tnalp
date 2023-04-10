@@ -106,6 +106,7 @@ export default function OrderListScreen() {
                             <th>USER</th>
                             <th>DATE</th>
                             <th>TOTAL (฿)</th>
+                            <th>UPLOADED</th>
                             <th>PAID</th>
                             <th>DELIVERED</th>
                             <th>ACTIONS</th>
@@ -119,15 +120,21 @@ export default function OrderListScreen() {
                                 <td>{order.createdAt.substring(0, 10)}</td>
                                 <td>{order.totalPrice.toFixed(2)}</td>
                                 <td>
-                                    {order.isPaid ? order.paidAt.substring(0, 10)
+                                    {order.isCanceled ? 'Canceled'
                                         :
-                                        order.isCanceled ? 'Canceled'
+                                        order.isUploaded ? order.uploadedAt.substring(0, 10)
                                             : 'No'}
                                 </td>
                                 <td>
-                                    {order.isDelivered ? order.deliveredAt.substring(0, 10)
+                                    {order.isCanceled ? 'Canceled'
                                         :
-                                        order.isCanceled ? 'Canceled'
+                                        order.isPaid ? order.paidAt.substring(0, 10)
+                                            : 'No'}
+                                </td>
+                                <td>
+                                    {order.isCanceled ? 'Canceled'
+                                        :
+                                        order.isDelivered ? order.deliveredAt.substring(0, 10)
                                             : 'No'}
                                 </td>
                                 <td>

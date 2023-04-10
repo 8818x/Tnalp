@@ -88,20 +88,20 @@ export default function PlaceOrderScreen() {
                         <Card.Body>
                             <Card.Title>Shipping</Card.Title>
                             <Card.Text>
-                                <strong>Name:</strong> {cart.shippingAddress.fullName} <br />
-                                <strong>Phone Number:</strong> {cart.shippingAddress.phoneNumber} <br />
-                                <strong>Address: </strong> {cart.shippingAddress.address}, {cart.shippingAddress.district}, {cart.shippingAddress.province}, {cart.shippingAddress.postalCode}
+                                <b style={{ fontWeight: '500'}}>Name:</b> {cart.shippingAddress.fullName} <br />
+                                <b style={{ fontWeight: '500'}}>Phone Number:</b> {cart.shippingAddress.phoneNumber} <br />
+                                <b style={{ fontWeight: '500'}}>Address: </b> {cart.shippingAddress.address}, {cart.shippingAddress.district}, {cart.shippingAddress.province}, {cart.shippingAddress.postalCode}
                             </Card.Text>
-                            <Link to='/shipping'>Edit</Link>
+                            <Link to='/shipping' style={{color: '#194d31', textDecoration: 'none', fontWeight: '700'}}>Edit</Link>
                         </Card.Body>
                     </Card>
                     <Card className='mb-3'>
                         <Card.Body>
                             <Card.Title>Payment</Card.Title>
                             <Card.Text>
-                                <strong>Method:</strong> {cart.paymentMethod} <br />
+                                <b style={{ fontWeight: '500'}}>Method:</b> {cart.paymentMethod} <br />
                             </Card.Text>
-                            <Link to='/payment'>Edit</Link>
+                            <Link to='/payment' style={{color: '#194d31', textDecoration: 'none', fontWeight: '700'}}>Edit</Link>
                         </Card.Body>
                     </Card>
                     <Card className='mb-3'>
@@ -115,7 +115,7 @@ export default function PlaceOrderScreen() {
                                                 <img src={item.image} alt={item.name}
                                                     className='img-fluid rounded no-thumbnail-border img-thumbnail'>
                                                 </img>{' '}
-                                                <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                                                <Link to={`/product/${item.slug}`} style={{color: '#194d31', textDecoration: 'none', fontWeight: '600'}}>{item.name}</Link>
                                             </Col>
                                             <Col md={3}>
                                                 <span>⨯ {item.quantity}</span>
@@ -125,7 +125,7 @@ export default function PlaceOrderScreen() {
                                     </ListGroup.Item>
                                 ))}
                             </ListGroup>
-                            <Link to='/cart'>Edit</Link>
+                            <Link to='/cart' style={{color: '#194d31', textDecoration: 'none', fontWeight: '700'}}>Edit</Link>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -133,7 +133,7 @@ export default function PlaceOrderScreen() {
                     <Card>
                         <Card.Body>
                             <Card.Title>Order Summary</Card.Title>
-                            <ListGroup varaint='flush'>
+                            <ListGroup variant='flush'>
                                 <ListGroup.Item>
                                     <Row>
                                         <Col>Items</Col>

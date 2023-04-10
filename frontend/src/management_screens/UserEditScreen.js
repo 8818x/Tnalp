@@ -109,6 +109,7 @@ export default function UserEditScreen() {
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Name</Form.Label>
                         <Form.Control
+                            placeholder='Name'
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -117,6 +118,7 @@ export default function UserEditScreen() {
                     <Form.Group className="mb-3" controlId="email">
                         <Form.Label>Email</Form.Label>
                         <Form.Control
+                            placeholder='Email'
                             value={email}
                             type="email"
                             onChange={(e) => setEmail(e.target.value)}

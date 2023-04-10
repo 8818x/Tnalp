@@ -62,6 +62,7 @@ export default function ShippingAddressScreen() {
                     <Form.Group className="mb-3" controlId="fullName">
                         <Form.Label>Full Name</Form.Label>
                         <Form.Control
+                            placeholder="Full Name"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
                             required />
@@ -69,6 +70,7 @@ export default function ShippingAddressScreen() {
                     <Form.Group className="mb-3" controlId="phoneNumber">
                         <Form.Label>Phone Number</Form.Label>
                         <Form.Control
+                            placeholder="Phone Number"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             type="tel"
@@ -78,6 +80,7 @@ export default function ShippingAddressScreen() {
                     <Form.Group className="mb-3" controlId="address">
                         <Form.Label>Address</Form.Label>
                         <Form.Control
+                            placeholder="Address"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             required />
@@ -85,6 +88,7 @@ export default function ShippingAddressScreen() {
                     <Form.Group className="mb-3" controlId="district">
                         <Form.Label>District</Form.Label>
                         <Form.Control
+                            placeholder="District"
                             value={district}
                             onChange={(e) => setDistrict(e.target.value)}
                             required />
@@ -92,6 +96,7 @@ export default function ShippingAddressScreen() {
                     <Form.Group className="mb-3" controlId="province">
                         <Form.Label>Province</Form.Label>
                         <Form.Control
+                            placeholder="Province"
                             value={province}
                             onChange={(e) => setProvince(e.target.value)}
                             required />
@@ -99,6 +104,7 @@ export default function ShippingAddressScreen() {
                     <Form.Group className="mb-3" controlId="postalCode">
                         <Form.Label>Postal Code</Form.Label>
                         <Form.Control
+                            placeholder="Postal Code"
                             value={postalCode}
                             onChange={(e) => setPostalCode(e.target.value)}
                             type='any'
@@ -106,7 +112,7 @@ export default function ShippingAddressScreen() {
                             required />
                     </Form.Group>
                     <div className="mb-3">
-                        <Button varaint="primary" type="submit">
+                        <Button variant="primary" type="submit">
                             Continue
                         </Button>
                     </div>

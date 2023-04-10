@@ -17,11 +17,11 @@ export default function SearchBox() {
                     name='q'
                     id='q'
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search Products"
+                    placeholder="Search Tnalp"
                     aria-label='Search Products'
                     aria-describedby="button-search">
                 </FormControl>
-                <Button variant='outline-primary' type='submit' id='button-search'>
+                <Button variant='outline-dark' style={{ backgroundColor: '#1B4D3E', color: 'white', borderColor: 'white' }}type='submit' id='button-search'>
                     <i className="fas fa-search"></i>
                 </Button>
             </InputGroup>

@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button'
 import ListGroupItem from 'react-bootstrap/esm/ListGroupItem';
 import axios from 'axios';
-import { Form } from 'react-bootstrap';
+import { Card, Form } from 'react-bootstrap';
 
 export default function CartScreen() {
     const navigate = useNavigate();
@@ -47,7 +47,7 @@ export default function CartScreen() {
                 <Col md={8}>
                     {cartItems.length === 0 ? (
                         <MessageBox>
-                            Cart is empty. <Link to='/'>Go Shopping</Link>
+                            Cart is empty. <Link to='/' style={{color: '#1B4D3E', textDecoration: 'none', fontWeight: 'bold'}}>Go Shopping</Link>
                         </MessageBox>
                     ) : (
                         <ListGroup>
@@ -60,7 +60,7 @@ export default function CartScreen() {
                                                 alt={item.name}
                                                 className="img-fluid rounded img-thumbnail no-thumbnail-border">
                                             </img>{' '}
-                                            <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                                            <Link to={`/product/${item.slug}`} style={{color: '#194d31', textDecoration: 'none', fontWeight: '600'}}>{item.name}</Link>
                                         </Col>
                                         <Col md={3}>
                                             <div className="quantity-controls d-flex">
@@ -95,7 +95,9 @@ export default function CartScreen() {
                     )}
                 </Col>
                 <Col md={4}>
-                    <ListGroup varaint="flush">
+                    <Card>
+                        <Card.Body>
+                    <ListGroup variant="flush">
                         <ListGroup.Item>
                             <h3>
                                 Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
@@ -115,6 +117,8 @@ export default function CartScreen() {
                             </div>
                         </ListGroupItem>
                     </ListGroup>
+                    </Card.Body>
+                    </Card>
                 </Col>
             </Row>
         </div>

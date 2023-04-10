@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import axios from 'axios';
 import logger from 'use-reducer-logger';
 import Row from 'react-bootstrap/Row';
@@ -29,7 +28,6 @@ function HomeScreen() {
         loading: true,
         error: '',
     });
-    // const [products, setProducts] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
             dispatch({ type: 'FETCH_REQUEST' });
@@ -40,7 +38,6 @@ function HomeScreen() {
             catch (err) {
                 dispatch({ type: 'FETCH_FAIL', payload: err.message });
             }
-            // setProducts(result.data);
         };
         fetchData();
     }, []);

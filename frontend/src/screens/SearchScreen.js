@@ -4,7 +4,7 @@ import { getError } from "../utils";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import Rating from "../components/Rating";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
@@ -131,7 +131,7 @@ export default function SearchScreen() {
         const sortOrder = filter.order || order;
         return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
     }
-    
+
     return (
         <div>
             <Helmet>
@@ -143,7 +143,7 @@ export default function SearchScreen() {
                     <div>
                         <ul>
                             <li>
-                                <Link className={'all' === category ? 'text-bold' : ''}
+                                <Link style={{ color: '#194d31', textDecoration: 'none', fontWeight: '600' }} className={'all' === category ? 'text-bold' : ''}
                                     to={getFilterUrl({ category: 'all' })}>
                                     Any
                                 </Link>
@@ -151,6 +151,7 @@ export default function SearchScreen() {
                             {categories.map((c) => (
                                 <li key={c}>
                                     <Link
+                                        style={{ color: '#194d31', textDecoration: 'none', fontWeight: '600' }}
                                         className={c === category ? 'text-bold' : ''}
                                         to={getFilterUrl({ category: c })}>{c}</Link>
                                 </li>
@@ -162,6 +163,7 @@ export default function SearchScreen() {
                         <ul>
                             <li>
                                 <Link
+                                    style={{ color: '#194d31', textDecoration: 'none', fontWeight: '600' }}
                                     className={'all' === price ? 'text-bold' : ''}
                                     to={getFilterUrl({ price: 'all' })}
                                 >
@@ -171,6 +173,7 @@ export default function SearchScreen() {
                             {prices.map((p) => (
                                 <li key={p.value}>
                                     <Link
+                                        style={{ color: '#194d31', textDecoration: 'none', fontWeight: '600' }}
                                         to={getFilterUrl({ price: p.value })}
                                         className={p.value === price ? 'text-bold' : ''}
                                     >
@@ -186,6 +189,7 @@ export default function SearchScreen() {
                             {ratings.map((r) => (
                                 <li key={r.name}>
                                     <Link
+                                        style={{ textDecoration: 'none', fontWeight: '600' }}
                                         to={getFilterUrl({ rating: r.rating })}
                                         className={`${r.rating}` === `${rating}` ? 'text-bold' : ''}>
                                         <Rating caption={' & Up'} rating={r.rating}></Rating>
@@ -225,23 +229,25 @@ export default function SearchScreen() {
                                 </Col>
                                 <Col className="text-end">
                                     Sort by{' '}
-                                    <select
-                                        value={order}
-                                        onChange={(e) => {
-                                            navigate(getFilterUrl({ order: e.target.value }));
-                                        }}
-                                    >
-                                        <option value="newest">Newest Arrivals</option>
-                                        <option value="lowest">Price: Low to High</option>
-                                        <option value="highest">Price: High to Low</option>
-                                        <option value="toprated">Avg. Customer Reviews</option>
-                                    </select>
+                                    <Dropdown onSelect={(eventKey) => navigate(getFilterUrl({ order: eventKey }))}>
+                                        <Dropdown.Toggle variant="light" id="dropdown-basic" style={{ borderColor: '#194d31'}}>
+                                            {order === 'newest' ? 'Newest Arrivals' :
+                                                order === 'lowest' ? 'Price: Low to High' :
+                                                    order === 'highest' ? 'Price: High to Low' :
+                                                        order === 'toprated' ? 'Avg. Customer Reviews' : ''}
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item eventKey="newest">Newest Arrivals</Dropdown.Item>
+                                            <Dropdown.Item eventKey="lowest">Price: Low to High</Dropdown.Item>
+                                            <Dropdown.Item eventKey="highest">Price: High to Low</Dropdown.Item>
+                                            <Dropdown.Item eventKey="toprated">Avg. Customer Reviews</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
                                 </Col>
                             </Row>
                             {products.length === 0 && (
                                 <MessageBox>No Product Found</MessageBox>
                             )}
-
                             <Row>
                                 {products.map((product) => (
                                     <Col sm={6} lg={4} className="mb-3" key={product._id}>

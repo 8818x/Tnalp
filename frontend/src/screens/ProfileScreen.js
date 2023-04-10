@@ -80,6 +80,7 @@ export default function ProfileScreen() {
                 <Form.Group className='mb-3' controlId='name'>
                     <Form.Label>Name</Form.Label>
                     <Form.Control
+                        placeholder="Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required />
@@ -87,6 +88,7 @@ export default function ProfileScreen() {
                 <Form.Group className='mb-3' controlId='email'>
                     <Form.Label>Email</Form.Label>
                     <Form.Control
+                        placeholder="Email"
                         type='email'
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -95,6 +97,7 @@ export default function ProfileScreen() {
                 <Form.Group className='mb-3' controlId='password'>
                     <Form.Label>New Password</Form.Label>
                     <Form.Control
+                        placeholder="New Password"
                         type='password'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -103,6 +106,7 @@ export default function ProfileScreen() {
                 <Form.Group className='mb-3' controlId='confirmpassword'>
                     <Form.Label>Confirm New Password</Form.Label>
                     <Form.Control
+                        placeholder="Confirm Password"
                         type='password'
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}

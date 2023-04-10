@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #F8F8FF !important;
 }
 
 main {
@@ -45,7 +46,8 @@ main {
 }
 
 .product-lg {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 .no-thumbnail-border.img-thumbnail {
@@ -58,13 +60,13 @@ main {
 }
 
 .checkout-steps > div {
-  border-bottom: 0.2rem solid #a0a0a0;
-  color: #a0a0a0;
+  border-bottom: 0.2rem solid #D3D3D3;
+  color: #D3D3D3;
 }
 
 .checkout-steps > div.active {
-  border-bottom: 0.2rem solid #f08000;
-  color: #f08000;
+  border-bottom: 0.2rem solid #194d31;
+  color: #194d31;
 }
 
 .navbar-brand {
@@ -73,10 +75,10 @@ main {
 
 .side-navbar {
   width: 240px;
-  height: 150%;
+  height: 130%;
   position: absolute;
   left: -300px;
-  background-color: #100901;
+  background-color: #194d31;
   transition: 0.5s;
 }
 
@@ -90,11 +92,6 @@ main {
 
 .active-nav {
   left: 0;
-}
-
-.btn-primary, .btn-outline-primary {
-  background-color: #f08000;
-  color: #000000;
 }
 
 .text-bold {
@@ -112,4 +109,32 @@ main {
 
 .order-lg {
   margin-bottom: 0.5rem;
+}
+
+.navbar {
+  background-color: #1B4D3E;
+}
+
+.btn-primary {
+  background-color: #427147 !important;
+  border-color: #427147 !important;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 2px 4px #1B4D3E;
+}
+
+.btn-outline-light {
+  border-color: #427147 !important;
+  color: #427147 !important;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.btn-outline-light:hover {
+  box-shadow: 0 2px 4px #1B4D3E;
+}
+
+.nav-link {
+  color: white !important;
 }

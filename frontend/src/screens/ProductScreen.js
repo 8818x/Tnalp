@@ -13,7 +13,7 @@ import MessageBox from "../components/MessageBox";
 import { getError } from "../utils";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
-import { FloatingLabel, Form } from "react-bootstrap";
+import { Card, FloatingLabel, Form } from "react-bootstrap";
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -142,7 +142,9 @@ function ProductScreen() {
                     ></img>
                 </Col>
                 <Col md={4}>
-                    <ListGroup varaint="flush">
+                    <Card>
+                        <Card.Body>
+                    <ListGroup variant="flush">
                         <ListGroup.Item>
                             <Helmet>
                                 <title>{product.name}</title>
@@ -159,11 +161,8 @@ function ProductScreen() {
                             Price: ฿{product.price}
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            Description:
-                            <p>{product.description}</p>
+                            Description: {product.description}
                         </ListGroup.Item>
-                    </ListGroup>
-                    <ListGroup className='product-lg' varaint="flush">
                         <ListGroup.Item>
                             <Row>
                                 <Col>Status:</Col>
@@ -182,24 +181,26 @@ function ProductScreen() {
                         </ListGroup.Item>
                     </ListGroup>
                     {product.countInStock > 0 && (
-                        <ListGroup className='product-lg d-flex' varaint="flush">
+                        <ListGroup className='product-lg d-flex' variant="flush">
                             <div>
-                                <Button onClick={addToCartHandler} varaint="primary" style={{ marginRight: '0.7rem' }}>
+                                <Button onClick={addToCartHandler} variant="outline-light" style={{ marginRight: '0.7rem' }}>
                                     Add to cart
                                 </Button>
-                                <Button onClick={buynowHandler} varaint="primary">
+                                <Button onClick={buynowHandler} variant="primary">
                                     Buy now
                                 </Button>
                             </div>
                         </ListGroup>
                     )}
+                    </Card.Body>
+                    </Card>
                 </Col>
             </Row>
             <div className="my-3">
                 <h2 ref={reviewsRef}>Reviews</h2>
                 <div className="mb-3">
                     {product.reviews.length === 0 && (
-                        <MessageBox>There is no review</MessageBox>
+                        <MessageBox>There is no review.</MessageBox>
                     )}
                 </div>
                 <ListGroup>

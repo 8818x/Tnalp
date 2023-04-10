@@ -155,6 +155,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Name</Form.Label>
                         <Form.Control
+                            placeholder='Name'
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -163,6 +164,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="slug">
                         <Form.Label>Slug</Form.Label>
                         <Form.Control
+                            placeholder='Slug'
                             value={slug}
                             onChange={(e) => setSlug(e.target.value)}
                             required
@@ -171,6 +173,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Price (฿)</Form.Label>
                         <Form.Control
+                            placeholder='Price'
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
                             required
@@ -179,6 +182,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="image">
                         <Form.Label>Image File</Form.Label>
                         <Form.Control
+                            placeholder='Image'
                             value={image}
                             onChange={(e) => setImage(e.target.value)}
                             required
@@ -192,6 +196,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="category">
                         <Form.Label>Category</Form.Label>
                         <Form.Control
+                            placeholder='Category'
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             required
@@ -200,6 +205,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="brand">
                         <Form.Label>Brand</Form.Label>
                         <Form.Control
+                            placeholder='Brand'
                             value={brand}
                             onChange={(e) => setBrand(e.target.value)}
                             required
@@ -208,6 +214,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="countInStock">
                         <Form.Label>Count In Stock</Form.Label>
                         <Form.Control
+                            placeholder='Count In Stock'
                             value={countInStock}
                             onChange={(e) => setCountInStock(e.target.value)}
                             required
@@ -216,6 +223,7 @@ export default function ProductEditScreen() {
                     <Form.Group className="mb-3" controlId="description">
                         <Form.Label>Description</Form.Label>
                         <Form.Control
+                            placeholder='Description'
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             required
