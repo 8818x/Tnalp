@@ -99,3 +99,8 @@ main {
 .text-bold {
   font-weight: bold;
 }
+
+.center-image {
+  display: block;
+  margin: 0 auto;
+}

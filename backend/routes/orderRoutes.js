@@ -26,6 +26,7 @@ orderRouter.post('/', isAuth, expressAsyncHandler(async (req, res) => {
         shippingPrice: req.body.shippingPrice,
         totalPrice: req.body.totalPrice,
         user: req.user._id,
+        imageSlip: '/images',
     });
 
     const order = await newOrder.save();
@@ -106,6 +107,21 @@ orderRouter.put(
             order.deliveredAt = Date.now();
             await order.save();
             res.send({ message: 'Order Delivered' });
+        } else {
+            res.status(404).send({ message: 'Order Not Found' });
+        }
+    })
+);
+
+orderRouter.put(
+    '/:id/upload',
+    isAuth,
+    expressAsyncHandler(async (req, res) => {
+        const order = await Order.findById(req.params.id);
+        if (order) {
+            order.imageSlip = req.body.imageSlip
+            await order.save();
+            res.send({ message: 'Paid Succesfully' });
         } else {
             res.status(404).send({ message: 'Order Not Found' });
         }

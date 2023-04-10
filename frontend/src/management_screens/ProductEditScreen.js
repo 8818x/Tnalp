@@ -122,6 +122,7 @@ export default function ProductEditScreen() {
 
             toast.success('Image uploaded successfully');
             setImage(data.secure_url);
+
         } catch (err) {
             toast.error(getError(err));
             dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
@@ -178,7 +179,6 @@ export default function ProductEditScreen() {
                         <Form.Control type="file" onChange={uploadFileHandler} />
                         {loadingUpload && <LoadingBox></LoadingBox>}
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="category">
                         <Form.Label>Category</Form.Label>
                         <Form.Control

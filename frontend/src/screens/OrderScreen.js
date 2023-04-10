@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useContext, useEffect, useReducer } from "react";
-import { Button, Card, Col, ListGroup, Row } from "react-bootstrap";
+import React, { useContext, useEffect, useReducer, useState } from "react";
+import { Button, Card, Col, Form, ListGroup, Row } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LoadingBox from "../components/LoadingBox";
@@ -29,6 +29,12 @@ function reducer(state, action) {
                 loadingDeliver: false,
                 successDeliver: false,
             };
+        case 'UPDATE_REQUEST':
+            return { ...state, loadingUpdate: true };
+        case 'UPDATE_SUCCESS':
+            return { ...state, loadingUpdate: false };
+        case 'UPDATE_FAIL':
+            return { ...state, loadingUpdate: false };
         default:
             return state;
     }
@@ -39,7 +45,7 @@ export default function OrderScreen() {
     const { userInfo } = state;
     const params = useParams();
     const { id: orderId } = params;
-    const [{ loading, error, order, successPay, loadingPay, loadingDeliver, successDeliver }, dispatch] = useReducer(reducer, {
+    const [{ loading, error, order, successPay, loadingPay, loadingDeliver, successDeliver, loadingUpdate, loadingUpload, }, dispatch] = useReducer(reducer, {
         loading: true,
         order: {},
         error: '',
@@ -47,6 +53,7 @@ export default function OrderScreen() {
         loadingPay: false,
     });
 
+    const [imageSlip, setImage] = useState('');
     useEffect(() => {
         const fetchOrder = async () => {
             try {
@@ -54,6 +61,7 @@ export default function OrderScreen() {
                 const { data } = await axios.get(`/api/orders/${orderId}`, {
                     headers: { authorization: `Bearer ${userInfo.token}` },
                 });
+                setImage(data.imageSlip);
                 dispatch({ type: 'FETCH_SUCCESS', payload: data });
             } catch (err) {
                 dispatch({ type: 'FETCH__FAIL', payload: getError(err) });
@@ -69,6 +77,7 @@ export default function OrderScreen() {
             dispatch({ type: 'DELIVER_RESET' });
         }
     }, [order, userInfo, orderId, navigate, successPay, successDeliver])
+
     async function deliverOrderHandler() {
         try {
             dispatch({ type: 'DELIVER_REQUEST' });
@@ -86,6 +95,53 @@ export default function OrderScreen() {
             dispatch({ type: 'DELIVER_FAIL' });
         }
     }
+
+    const uploadFileHandler = async (e) => {
+        const file = e.target.files[0];
+        const bodyFormData = new FormData();
+        bodyFormData.append('file', file);
+        try {
+            dispatch({ type: 'UPLOAD_REQUEST' });
+            const { data } = await axios.post('/api/upload', bodyFormData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    authorization: `Bearer ${userInfo.token}`,
+                },
+            });
+            dispatch({ type: 'UPLOAD_SUCCESS' });
+
+            toast.success('Image Uploaded Successfully');
+            setImage(data.secure_url);
+
+        } catch (err) {
+            toast.error(getError(err));
+            dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+        }
+    };
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        try {
+            dispatch({ type: 'UPDATE_REQUEST' });
+            await axios.put(
+                `/api/orders/${order._id}/upload`,
+                {
+                    _id: orderId._id,
+                    imageSlip,
+                },
+                {
+                    headers: { Authorization: `Bearer ${userInfo.token}` },
+                }
+            );
+            dispatch({
+                type: 'UPDATE_SUCCESS',
+            });
+            toast.success('Wait for confirmation from the seller');
+        } catch (err) {
+            toast.error(getError(err));
+            dispatch({ type: 'UPDATE_FAIL' });
+        }
+    };
     return (
         loading ? (
             <LoadingBox></LoadingBox>
@@ -129,6 +185,34 @@ export default function OrderScreen() {
                                 ) : (
                                     <MessageBox variant='danger'>Not Paid</MessageBox>
                                 )}
+                                <img
+                                    src='https://res.cloudinary.com/datnrdn28/image/upload/v1681071570/qrcode_j3d3tu.png'
+                                    alt='promptpay'
+                                    className='img-fluid center-image'>
+                                </img>
+                                <p>KBank</p>
+                                <p>Mobile Number: 0123456789</p>
+                                <Form onSubmit={submitHandler}>
+                                    <Form.Group className="mb-3" controlId="image">
+                                        <Form.Label>Image File</Form.Label>
+                                        <Form.Control
+                                            value={imageSlip}
+                                            onChange={(e) => setImage(e.target.value)}
+                                            required
+                                        />
+                                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="imageFile">
+                                        <Form.Label>Upload File</Form.Label>
+                                        <Form.Control type="file" onChange={uploadFileHandler} />
+                                        {loadingUpload && <LoadingBox></LoadingBox>}
+                                    </Form.Group>
+                                    <div className="mb-3">
+                                        <Button disabled={loadingUpdate} type="submit">
+                                            Update
+                                        </Button>
+                                        {loadingUpdate && <LoadingBox></LoadingBox>}
+                                    </div>
+                                </Form>
                             </Card.Body>
                         </Card>
                         <Card className="mb-3">
