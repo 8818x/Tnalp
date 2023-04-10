@@ -17,6 +17,14 @@ function reducer(state, action) {
             return { ...state, loading: false, order: action.payload, error: '' };
         case 'FETCH_FAIL':
             return { ...state, loading: false, error: action.payload };
+        case 'PAY_REQUEST':
+            return { ...state, loadingPay: true };
+        case 'PAY_SUCCESS':
+            return { ...state, loadingPay: false, successPay: true };
+        case 'PAY_FAIL':
+            return { ...state, loadingPay: false };
+        case 'PAY_RESET':
+            return { ...state, loadingPay: false, successPay: false };
         case 'DELIVER_REQUEST':
             return { ...state, loadingDeliver: true };
         case 'DELIVER_SUCCESS':
@@ -35,17 +43,53 @@ function reducer(state, action) {
             return { ...state, loadingUpdate: false };
         case 'UPDATE_FAIL':
             return { ...state, loadingUpdate: false };
+        case 'UPLOAD_REQUEST':
+            return { ...state, loadingUpload: true, errorUpload: '' };
+        case 'UPLOAD_SUCCESS':
+            return {
+                ...state,
+                loadingUpload: false,
+                errorUpload: '',
+            };
+        case 'UPLOAD_FAIL':
+            return { ...state, loadingUpload: false, errorUpload: action.payload };
+        case 'CANCEL_REQUEST':
+            return { ...state, loadingCancel: true };
+        case 'CANCEL_SUCCESS':
+            return { ...state, loadingCancel: false, successCancel: true };
+        case 'CANCEL_FAIL':
+            return { ...state, loadingCancel: false };
+        case 'CANCEL_RESET':
+            return {
+                ...state,
+                loadingCancel: false,
+                successCancel: false,
+            };
         default:
             return state;
     }
 }
+
 export default function OrderScreen() {
     const navigate = useNavigate();
     const { state } = useContext(Store);
     const { userInfo } = state;
     const params = useParams();
     const { id: orderId } = params;
-    const [{ loading, error, order, successPay, loadingPay, loadingDeliver, successDeliver, loadingUpdate, loadingUpload, }, dispatch] = useReducer(reducer, {
+    const [{ loading,
+        error,
+        order,
+        successPay,
+        loadingPay,
+        loadingDeliver,
+        successDeliver,
+        loadingUpdate,
+        loadingUpload,
+        loadingCancel,
+        successCancel,
+
+    }, dispatch
+    ] = useReducer(reducer, {
         loading: true,
         order: {},
         error: '',
@@ -53,7 +97,9 @@ export default function OrderScreen() {
         loadingPay: false,
     });
 
-    const [imageSlip, setImage] = useState('');
+    const [imageUploaded, setImage] = useState('');
+    const [already, setAlready] = useState(false);
+
     useEffect(() => {
         const fetchOrder = async () => {
             try {
@@ -61,7 +107,7 @@ export default function OrderScreen() {
                 const { data } = await axios.get(`/api/orders/${orderId}`, {
                     headers: { authorization: `Bearer ${userInfo.token}` },
                 });
-                setImage(data.imageSlip);
+                setImage(data.imageUploaded);
                 dispatch({ type: 'FETCH_SUCCESS', payload: data });
             } catch (err) {
                 dispatch({ type: 'FETCH__FAIL', payload: getError(err) });
@@ -70,13 +116,56 @@ export default function OrderScreen() {
         if (!userInfo) {
             return navigate('/signin')
         }
-        if (!order._id || successPay || successDeliver || (order._id && order._id !== orderId)) {
+        if (!order._id || successPay || successDeliver || successCancel || loadingUpdate || (order._id && order._id !== orderId)) {
             fetchOrder();
+        }
+        if (successPay) {
+            dispatch({ type: 'PAY_RESET' })
         }
         if (successDeliver) {
             dispatch({ type: 'DELIVER_RESET' });
         }
-    }, [order, userInfo, orderId, navigate, successPay, successDeliver])
+        if (successCancel) {
+            dispatch({ type: 'CANCEL_RESET' });
+        }
+
+    }, [order, userInfo, orderId, navigate, successPay, successDeliver, successCancel, loadingUpdate])
+
+    async function paymentHandler() {
+        try {
+            dispatch({ type: 'PAY_REQUEST' })
+            const { data } = await axios.put(
+                `/api/orders/${order._id}/pay`,
+                {},
+                {
+                    headers: { authorization: `Bearer ${userInfo.token}` },
+                }
+            );
+            dispatch({ type: 'PAY_SUCCESS', payload: data });
+            toast.success('Paid Successfully');
+        } catch (err) {
+            toast.error(getError(err));
+            dispatch({ type: 'PAY_FAIL' })
+        }
+    }
+
+    async function cancelHandler() {
+        try {
+            dispatch({ type: 'CANCEL_REQUEST' })
+            const { data } = await axios.put(
+                `/api/orders/${order._id}/cancel`,
+                {},
+                {
+                    headers: { authorization: `Bearer ${userInfo.token}` },
+                }
+            );
+            dispatch({ type: 'CANCEL_SUCCESS', payload: data });
+            toast.success('Cancel Successfully');
+        } catch (err) {
+            toast.error(getError(err));
+            dispatch({ type: 'CANCEL_FAIL' })
+        }
+    }
 
     async function deliverOrderHandler() {
         try {
@@ -117,6 +206,7 @@ export default function OrderScreen() {
             toast.error(getError(err));
             dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
         }
+        setAlready(true)
     };
 
     const submitHandler = async (e) => {
@@ -124,10 +214,10 @@ export default function OrderScreen() {
         try {
             dispatch({ type: 'UPDATE_REQUEST' });
             await axios.put(
-                `/api/orders/${order._id}/upload`,
+                `/api/orders/${orderId}/upload`,
                 {
-                    _id: orderId._id,
-                    imageSlip,
+                    _id: orderId,
+                    imageUploaded,
                 },
                 {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -141,7 +231,9 @@ export default function OrderScreen() {
             toast.error(getError(err));
             dispatch({ type: 'UPDATE_FAIL' });
         }
+
     };
+
     return (
         loading ? (
             <LoadingBox></LoadingBox>
@@ -162,9 +254,13 @@ export default function OrderScreen() {
                                     <strong>Name:</strong> {order.shippingAddress.fullName} <br />
                                     <strong>Address: </strong> {order.shippingAddress.address}, {order.shippingAddress.phoneNumber}, {order.shippingAddress.district}, {order.shippingAddress.province}, {order.shippingAddress.postalCode}
                                 </Card.Text>
-                                {order.isDelivered ? (
+                                {order.isDelivered && !order.isCanceled ? (
                                     <MessageBox variant='success'>
                                         Delivered at {order.deliveredAt}
+                                    </MessageBox>
+                                ) : !order.isDelivered && order.isCanceled ? (
+                                    <MessageBox variant='primary'>
+                                        Order is canceled at {order.canceledAt}
                                     </MessageBox>
                                 ) : (
                                     <MessageBox variant='danger'>
@@ -178,40 +274,49 @@ export default function OrderScreen() {
                                 <Card.Title>
                                     <strong>Method:</strong> {order.paymentMethod}
                                 </Card.Title>
-                                {order.isPaid ? (
-                                    <MessageBox variant='success'>
-                                        Paid at {order.paidAt}
-                                    </MessageBox>
-                                ) : (
+                                {!order.isUploaded && !order.isPaid && !order.isCanceled ? (
                                     <MessageBox variant='danger'>Not Paid</MessageBox>
+                                ) : order.isUploaded && !order.isPaid && !order.isCanceled ? (
+                                    <MessageBox variant='warning'>Wait for Confirmation</MessageBox>
+                                ) : order.isUploaded && !order.isPaid && order.isCanceled ? (
+                                    <MessageBox variant='primary'>Order is Canceled at {order.canceledAt} </MessageBox>
+                                ) : (
+                                    <MessageBox variant='success'>Paid at {order.paidAt}</MessageBox>
                                 )}
                                 <img
                                     src='https://res.cloudinary.com/datnrdn28/image/upload/v1681071570/qrcode_j3d3tu.png'
                                     alt='promptpay'
                                     className='img-fluid center-image'>
                                 </img>
-                                <p>KBank</p>
-                                <p>Mobile Number: 0123456789</p>
+                                <p className="centered-text">
+                                    <strong>KBank</strong><br />
+                                    <strong>Name: </strong>Example Example<br />
+                                    <strong>Bank account no.: </strong>xxx-x-xxxxx-x<br />
+                                    <strong>Mobile Number: </strong>0123456789
+                                </p>
                                 <Form onSubmit={submitHandler}>
                                     <Form.Group className="mb-3" controlId="image">
                                         <Form.Label>Image File</Form.Label>
                                         <Form.Control
-                                            value={imageSlip}
+                                            value={imageUploaded}
                                             onChange={(e) => setImage(e.target.value)}
                                             required
+                                            disabled
                                         />
                                     </Form.Group>
                                     <Form.Group className="mb-3" controlId="imageFile">
                                         <Form.Label>Upload File</Form.Label>
-                                        <Form.Control type="file" onChange={uploadFileHandler} />
+                                        <Form.Control type="file" onChange={uploadFileHandler} disabled={order.isUploaded} />
                                         {loadingUpload && <LoadingBox></LoadingBox>}
                                     </Form.Group>
-                                    <div className="mb-3">
-                                        <Button disabled={loadingUpdate} type="submit">
-                                            Update
-                                        </Button>
-                                        {loadingUpdate && <LoadingBox></LoadingBox>}
-                                    </div>
+                                    {!order.isUploaded && (
+                                        <div className="mb-3">
+                                            <Button disabled={!already} type="submit">
+                                                Upload
+                                            </Button>
+                                            {loadingUpdate && <LoadingBox></LoadingBox>}
+                                        </div>
+                                    )}
                                 </Form>
                             </Card.Body>
                         </Card>
@@ -221,7 +326,7 @@ export default function OrderScreen() {
                                 <ListGroup variant="flush">
                                     {order.orderItems.map((item) => (
                                         <ListGroup.Item key={item._id}>
-                                            <Row>
+                                            <Row className='align-items-center'>
                                                 <Col md={6}>
                                                     <img
                                                         src={item.image}
@@ -231,7 +336,7 @@ export default function OrderScreen() {
                                                     <Link to={`/product/${item.slug}`}>{item.name}</Link>
                                                 </Col>
                                                 <Col md={3}>
-                                                    <span>{item.quantity}</span>
+                                                    <span>⨯{item.quantity}</span>
                                                 </Col>
                                                 <Col md={3}>฿{item.price}</Col>
                                             </Row>
@@ -264,7 +369,36 @@ export default function OrderScreen() {
                                             <Col>฿{order.totalPrice.toFixed(2)}</Col>
                                         </Row>
                                     </ListGroup.Item>
-                                    {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                                    {userInfo.isAdmin && order.isUploaded && !order.isPaid && !order.isDelivered && (
+                                        <ListGroup.Item>
+                                            {loadingUpdate && <LoadingBox></LoadingBox>}
+                                            <img
+                                                src={order.imageUploaded}
+                                                alt={order.uploadedAt}
+                                                className='img-fluid center-image'>
+                                            </img>
+                                        </ListGroup.Item>
+                                    )}
+
+                                    {userInfo.isAdmin && order.isUploaded && !order.isPaid && !order.isDelivered && !order.isCanceled && (
+                                        <ListGroup.Item>
+                                            {loadingUpdate && <LoadingBox></LoadingBox>}
+                                            <div className="d-grid order-lg" >
+                                                {loadingPay && <LoadingBox></LoadingBox>}
+                                                <Button type="button" onClick={paymentHandler}>
+                                                    Confirm Payment
+                                                </Button>
+                                            </div>
+                                            <div className="d-grid">
+                                                {loadingCancel && <LoadingBox></LoadingBox>}
+                                                <Button type="button" onClick={cancelHandler}>
+                                                    Cancel Order
+                                                </Button>
+                                            </div>
+                                        </ListGroup.Item>
+                                    )}
+
+                                    {userInfo.isAdmin && order.isUploaded && order.isPaid && !order.isDelivered && !order.isCanceled && (
                                         <ListGroup.Item>
                                             {loadingDeliver && <LoadingBox></LoadingBox>}
                                             <div className="d-grid">

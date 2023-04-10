@@ -118,11 +118,17 @@ export default function OrderListScreen() {
                                 <td>{order.user ? order.user.name : 'DELETED USER'}</td>
                                 <td>{order.createdAt.substring(0, 10)}</td>
                                 <td>{order.totalPrice.toFixed(2)}</td>
-                                <td>{order.isPaid ? order.paidAt.substring(0, 10) : 'No'}</td>
                                 <td>
-                                    {order.isDelivered
-                                        ? order.deliveredAt.substring(0, 10)
-                                        : 'No'}
+                                    {order.isPaid ? order.paidAt.substring(0, 10)
+                                        :
+                                        order.isCanceled ? 'Canceled'
+                                            : 'No'}
+                                </td>
+                                <td>
+                                    {order.isDelivered ? order.deliveredAt.substring(0, 10)
+                                        :
+                                        order.isCanceled ? 'Canceled'
+                                            : 'No'}
                                 </td>
                                 <td>
                                     <Button

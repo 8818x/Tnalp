@@ -25,6 +25,16 @@ const reducer = (state, action) => {
             return { ...state, loadingUpdate: false };
         case 'UPDATE_FAIL':
             return { ...state, loadingUpdate: false };
+        case 'UPLOAD_REQUEST':
+            return { ...state, loadingUpload: true, errorUpload: '' };
+        case 'UPLOAD_SUCCESS':
+            return {
+                ...state,
+                loadingUpload: false,
+                errorUpload: '',
+            };
+        case 'UPLOAD_FAIL':
+            return { ...state, loadingUpload: false, errorUpload: action.payload };
         default:
             return state;
     }

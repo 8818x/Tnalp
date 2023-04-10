@@ -39,7 +39,11 @@ const orderSchema = new mongoose.Schema(
         paidAt: { type: Date },
         isDelivered: { type: Boolean, default: false },
         deliveredAt: { type: Date },
-        imageSlip: { type: String }
+        isUploaded: { type: Boolean, default: false },
+        uploadedAt: { type: Date },
+        imageUploaded: { type: String },
+        isCanceled: { type: Boolean, default: false },
+        canceledAt: { type: Date }
     },
     {
         timestamps: true,

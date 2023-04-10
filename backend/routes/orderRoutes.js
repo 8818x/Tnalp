@@ -26,7 +26,7 @@ orderRouter.post('/', isAuth, expressAsyncHandler(async (req, res) => {
         shippingPrice: req.body.shippingPrice,
         totalPrice: req.body.totalPrice,
         user: req.user._id,
-        imageSlip: '/images',
+        isCanceled: req.body.isCanceled,
     });
 
     const order = await newOrder.save();
@@ -98,6 +98,26 @@ orderRouter.get('/:id', isAuth, expressAsyncHandler(async (req, res) => {
 );
 
 orderRouter.put(
+    '/:id/pay',
+    isAuth,
+    expressAsyncHandler(async (req, res) => {
+        const order = await Order.findById(req.params.id);
+        if (order) {
+            order.isPaid = true;
+            order.paidAt = Date.now();
+            order.paymentResult = {
+                status: 'accept',
+            };
+
+            const updatedOrder = await order.save();
+            res.send({ message: 'Order Paid', order: updatedOrder });
+        } else {
+            res.status(404).send({ message: 'Order Not Found' });
+        }
+    })
+);
+
+orderRouter.put(
     '/:id/deliver',
     isAuth,
     expressAsyncHandler(async (req, res) => {
@@ -119,11 +139,29 @@ orderRouter.put(
     expressAsyncHandler(async (req, res) => {
         const order = await Order.findById(req.params.id);
         if (order) {
-            order.imageSlip = req.body.imageSlip
+            order.imageUploaded = req.body.imageUploaded
+            order.isUploaded = true;
+            order.uploadedAt = Date.now();
             await order.save();
-            res.send({ message: 'Paid Succesfully' });
+            res.send({ message: 'Upload Succesfully' });
         } else {
-            res.status(404).send({ message: 'Order Not Found' });
+            res.status(404).send({ message: 'Cannot Upload' });
+        }
+    })
+);
+
+orderRouter.put(
+    '/:id/cancel',
+    isAuth,
+    expressAsyncHandler(async (req, res) => {
+        const order = await Order.findById(req.params.id);
+        if (order) {
+            order.isCanceled = true;
+            order.canceledAt = Date.now();
+            await order.save();
+            res.send({ message: 'Cancel Succesfully' });
+        } else {
+            res.status(404).send({ message: 'Cannot Cancel' });
         }
     })
 );
