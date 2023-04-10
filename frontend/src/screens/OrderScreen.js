@@ -278,7 +278,7 @@ export default function OrderScreen() {
                                     <MessageBox variant='danger'>Not Paid</MessageBox>
                                 ) : order.isUploaded && !order.isPaid && !order.isCanceled ? (
                                     <MessageBox variant='warning'>Wait for Confirmation</MessageBox>
-                                ) : order.isUploaded && !order.isPaid && order.isCanceled ? (
+                                ) : !order.isPaid && order.isCanceled ? (
                                     <MessageBox variant='primary'>Order is Canceled at {order.canceledAt} </MessageBox>
                                 ) : (
                                     <MessageBox variant='success'>Paid at {order.paidAt}</MessageBox>
@@ -380,7 +380,7 @@ export default function OrderScreen() {
                                         </ListGroup.Item>
                                     )}
 
-                                    {userInfo.isAdmin && order.isUploaded && !order.isPaid && !order.isDelivered && !order.isCanceled && (
+                                    {userInfo.isAdmin && !order.isPaid && !order.isDelivered && !order.isCanceled && (
                                         <ListGroup.Item>
                                             {loadingUpdate && <LoadingBox></LoadingBox>}
                                             <div className="d-grid order-lg" >
@@ -389,6 +389,7 @@ export default function OrderScreen() {
                                                     Confirm Payment
                                                 </Button>
                                             </div>
+                            
                                             <div className="d-grid">
                                                 {loadingCancel && <LoadingBox></LoadingBox>}
                                                 <Button type="button" onClick={cancelHandler}>

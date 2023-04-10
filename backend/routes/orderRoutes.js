@@ -18,6 +18,7 @@ orderRouter.get(
 );
 
 orderRouter.post('/', isAuth, expressAsyncHandler(async (req, res) => {
+
     const newOrder = new Order({
         orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
         shippingAddress: req.body.shippingAddress,
@@ -30,6 +31,12 @@ orderRouter.post('/', isAuth, expressAsyncHandler(async (req, res) => {
     });
 
     const order = await newOrder.save();
+
+    req.body.orderItems.map(async (item) => {
+        const product = await Product.findById(item._id);
+        product.countInStock -= item.quantity;
+        await product.save();
+      });
     res.status(201).send({ message: 'New Order Created', order })
 })
 );
@@ -111,6 +118,7 @@ orderRouter.put(
 
             const updatedOrder = await order.save();
             res.send({ message: 'Order Paid', order: updatedOrder });
+
         } else {
             res.status(404).send({ message: 'Order Not Found' });
         }
@@ -159,6 +167,13 @@ orderRouter.put(
             order.isCanceled = true;
             order.canceledAt = Date.now();
             await order.save();
+
+            order.orderItems.map(async (item) => {
+                const product = await Product.findById(item._id);
+                product.countInStock += item.quantity;
+                await product.save();
+              });
+              
             res.send({ message: 'Cancel Succesfully' });
         } else {
             res.status(404).send({ message: 'Cannot Cancel' });
