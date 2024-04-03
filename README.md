@@ -38,6 +38,7 @@ Tnalp E-commerce Website is a full-stack web application built with React.js, No
     ```
 4. Start the backend server:
     ```bash
+    cd backend
     npm start
     ```
 5. Start the frontend development server:
