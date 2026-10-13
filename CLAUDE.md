@@ -1,4 +1,4 @@
-# Tnalp — MERN plant store (portfolio demo)
+# Tnalp: MERN plant store (portfolio demo)
 
 Express + Mongoose 7 API (`backend/`, :9002) · CRA 5 React storefront (`frontend/`, :3000)
 Run recipe, demo creds, and known quirks live in session memory, not here.

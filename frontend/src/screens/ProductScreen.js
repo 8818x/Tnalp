@@ -157,7 +157,7 @@ function ProductScreen() {
                                     rating={product.rating}
                                     caption={
                                         <>
-                                            {product.rating ? product.rating.toFixed(1) : '—'}{' '}
+                                            {product.rating ? product.rating.toFixed(1) : '0.0'}{' '}
                                             <a
                                                 href="#reviews"
                                                 onClick={(e) => {
@@ -266,7 +266,7 @@ function ProductScreen() {
                         </form>
                     ) : (
                         <div className="signin-hint">
-                            Sign in to write a review —{' '}
+                            Sign in to write a review:{' '}
                             <Link to={`/signin?redirect=/product/${product.slug}`}>Sign In</Link>
                         </div>
                     )}

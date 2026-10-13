@@ -1,11 +1,11 @@
-# DESIGN.md — Tnalp UI system
+# DESIGN.md: Tnalp UI system
 
 Single source of truth for visual decisions. Implementation lives in `frontend/src/index.css` (the "store polish" blocks at the bottom). When CSS and this doc disagree, fix both.
 
 ## Principles
 
 - Green brand on near-white ground; cards do the separating, not lines.
-- One accent per card: price **or** CTA — never both shouting.
+- One accent per card: price **or** CTA, never both shouting.
 - Whitespace over dividers: one `hr.soft-divider` per section max.
 - Every interactive element: visible hover, active and `:focus-visible` states.
 
@@ -71,15 +71,15 @@ Card padding 1–1.25rem; detail panel 28×32px; section gap 56px (`.reviews-sec
 
 ## Patterns
 
-- **Stock states**: `In stock · N available` badge; `Low stock — only N left` (amber, ≤5); `Out of stock` disables CTA.
-- **Breadcrumb**: `Products / {category} / {name}` — category links to `/search?category=`.
+- **Stock states**: `In stock · N available` badge; `Low stock: only N left` (amber, ≤5); `Out of stock` disables CTA.
+- **Breadcrumb**: `Products / {category} / {name}`; category links to `/search?category=`.
 - **Forms**: label always visible; placeholder is an example, never the label; inline error box with text + colour (`role=alert`); submit disables + reads `Signing in…` / `Creating account…`; `autocomplete` set (`email`, `current-password`, `new-password`, `name`).
 - **Cart math**: unit price (`฿450 each`) and line total (`฿900`) both shown; summary shows Subtotal, Shipping "At checkout", Total.
 - **Demo honesty**: payment is manual slip review; Terms/Privacy pages state the demo scope plainly.
 
 ## Accessibility
 
-- `:focus-visible` outline 2px `#1B4D3E`, offset 2px — buttons, inputs, links.
+- `:focus-visible` outline 2px `#1B4D3E`, offset 2px: buttons, inputs, links.
 - Icon-only buttons carry `aria-label` (`Increase quantity`, `Remove item`, `Show password`).
 - Targets ≥ 40px (steppers, remove, nav links).
 - Errors are text + colour, never colour alone.

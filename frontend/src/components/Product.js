@@ -50,7 +50,7 @@ function Product(props) {
                     ) : (
                         <>
                             {product.countInStock <= 5 && (
-                                <div className='product-stock low'>Low stock — only {product.countInStock} left</div>
+                                <div className='product-stock low'>Low stock: only {product.countInStock} left</div>
                             )}
                             <Button
                                 onClick={() => addToCartHandler(product)}

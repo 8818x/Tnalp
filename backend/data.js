@@ -70,7 +70,7 @@ const data = {
             reviews: [],
         },
         {
-            name: 'Potted Basil — Geo Planter',
+            name: 'Potted Basil Geo Planter',
             slug: 'potted-basil-geo-planter',
             image: '/images/6.png',
             brand: 'Tnalp',

@@ -1,4 +1,4 @@
-# Tnalp — Plant Store E-Commerce
+# Tnalp: Plant Store E-Commerce
 
 Full-stack MERN e-commerce demo: browse plants, manage a cart, place orders, pay by bank transfer with a payment-slip upload, and manage everything from an admin dashboard. ("Tnalp" = "plant" backwards.)
 
@@ -7,7 +7,7 @@ Full-stack MERN e-commerce demo: browse plants, manage a cart, place orders, pay
 - JWT auth with user / admin roles (bcrypt-hashed passwords)
 - Product catalog with search, categories, and reviews
 - Cart, checkout, and order history
-- Payment-slip upload — admin reviews the slip and marks the order paid (manual verification by design, modeled on Thai bank-transfer flows)
+- Payment-slip upload: admin reviews the slip and marks the order paid (manual verification by design, modeled on Thai bank-transfer flows)
 - Admin dashboard: products, orders, users, sales summary charts
 - Image uploads stored on the server's disk (`backend/uploads/`, served at `/uploads`)
 
@@ -68,7 +68,7 @@ Re-seed anytime with `node seed.js` from `backend/` (wipes products and users).
 
 ## Known Limitations (by design)
 
-- Payment is **manual slip review**, not a payment gateway — the admin sees the uploaded slip and confirms. Automated slip verification (e.g. PromptPay API) is the natural next step.
+- Payment is **manual slip review**, not a payment gateway; the admin sees the uploaded slip and confirms. Automated slip verification (e.g. PromptPay API) is the natural next step.
 - Uploads live on local disk; a production deployment needs object storage (S3/Cloudinary).
 - CRA 5 is in maintenance mode; a Vite migration is straightforward but out of scope here.
 - No automated tests.

@@ -250,7 +250,7 @@ function App() {
                 </main>
                 <footer className='site-footer'>
                     <Container className='d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 py-3'>
-                        <div><strong>Tnalp</strong> — plants, pots &amp; planters</div>
+                        <div><strong>Tnalp</strong>: plants, pots &amp; planters</div>
                         <Nav className='footer-nav'>
                             <LinkContainer to="/">
                                 <Nav.Link>Products</Nav.Link>

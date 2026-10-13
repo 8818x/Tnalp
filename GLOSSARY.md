@@ -1,103 +1,103 @@
-# Tnalp — ร้านต้นไม้
+# Tnalp: Plant Store
 
-คำศัพท์ร่วมสำหรับการขายต้นไม้ การสั่งซื้อ และการตรวจสลิปใน Tnalp ใช้ชื่อภาษาอังกฤษเหล่านี้ให้สม่ำเสมอในเอกสารและการสื่อสาร โดยดูรายละเอียดระบบใน [CONTEXT.md](./CONTEXT.md)
+Shared vocabulary for plant sales, ordering, and payment-slip review in Tnalp. Use these terms consistently in documentation and communication. See [CONTEXT.md](./CONTEXT.md) for system details.
 
-## ผู้ใช้งาน
+## Users
 
-**User (ผู้ใช้)**:
-บัญชีที่ลงทะเบียนกับร้าน ซึ่งอาจเป็นลูกค้าหรือผู้ดูแลระบบ
-_Avoid_: ใช้ Customer แทนบัญชีทุกประเภท
+**User**:
+A registered store account that may belong to a Customer or an Admin.
+_Avoid_: Customer when referring to every type of account.
 
-**Customer (ลูกค้า)**:
-ผู้ที่ซื้อหรือสั่งซื้อสินค้าจากร้าน เป็นบทบาทของผู้ใช้ในกระบวนการซื้อสินค้า
-_Avoid_: Client, Member เมื่อหมายถึงผู้ซื้อ
+**Customer**:
+A person buying or ordering Products from the store. This is the User's role in the purchasing process.
+_Avoid_: Client, Member when referring to a buyer.
 
-**Admin (ผู้ดูแลระบบ)**:
-ผู้ใช้ที่มีสิทธิ์จัดการสินค้า ผู้ใช้ และออเดอร์ของร้าน รวมถึงตรวจสลิปและยืนยันสถานะออเดอร์
-_Avoid_: Seller, Owner เพราะระบบไม่ได้แยกบทบาทเหล่านี้
+**Admin**:
+A User with permission to manage Products, Users, and Orders, including reviewing payment slips and confirming order statuses.
+_Avoid_: Seller, Owner, as the store does not define these as separate roles.
 
-## สินค้า
+## Products
 
-**Product (สินค้า)**:
-ต้นไม้หรือรายการสินค้าที่ร้านเสนอขาย โดยมีราคา รายละเอียด รูป และจำนวนคงเหลือ
-_Avoid_: Plant เมื่อหมายถึงรายการสินค้าของร้าน, Item เมื่อไม่ได้หมายถึงรายการในตะกร้าหรือออเดอร์
+**Product**:
+A plant or catalog entry offered for sale, with a price, description, image, and stock count.
+_Avoid_: Plant when referring to a catalog entry; Item unless referring to a Cart Item or Order Item.
 
-**Category (หมวดหมู่)**:
-กลุ่มที่ใช้จัดประเภทสินค้าและช่วยให้ลูกค้าค้นหาสินค้า
-_Avoid_: Collection, Tag
+**Category**:
+A group used to classify Products and help Customers find them.
+_Avoid_: Collection, Tag.
 
-**Stock (สต็อก)**:
-จำนวนหน่วยของสินค้าที่ร้านมีคงเหลือสำหรับขาย
-_Avoid_: Reservation เพราะจำนวนคงเหลือไม่ได้หมายถึงการสำรองสินค้า
+**Stock**:
+The number of units of a Product remaining for sale.
+_Avoid_: Reservation, as remaining stock does not imply reserved units.
 
-**Review (รีวิว)**:
-ความคิดเห็นและคะแนนที่ผู้ใช้ให้แก่สินค้า
-_Avoid_: Verified Purchase เพราะรีวิวไม่ได้ยืนยันว่าผู้เขียนเคยซื้อสินค้า
+**Review**:
+A User's comment and score for a Product.
+_Avoid_: Verified Purchase, as a Review does not confirm that its author purchased the Product.
 
-**Rating (คะแนนสินค้า)**:
-คะแนนเฉลี่ยจากรีวิวของสินค้า ใช้สรุปความเห็นของผู้รีวิว
-_Avoid_: Review เมื่อหมายถึงค่าคะแนนเฉลี่ย
+**Rating**:
+The average score from a Product's Reviews, summarizing reviewers' opinions.
+_Avoid_: Review when referring to the average score.
 
-## การสั่งซื้อ
+## Ordering
 
-**Cart (ตะกร้า)**:
-รายการสินค้าและจำนวนที่ลูกค้าเลือกไว้ก่อนยืนยันคำสั่งซื้อ
-_Avoid_: Order, Wishlist
+**Cart**:
+The Products and quantities a Customer selects before confirming an Order.
+_Avoid_: Order, Wishlist.
 
-**Cart Item (รายการในตะกร้า)**:
-สินค้าหนึ่งรายการพร้อมจำนวนที่เลือกไว้ในตะกร้า
-_Avoid_: Order Item ก่อนยืนยันคำสั่งซื้อ
+**Cart Item**:
+A Product and its selected quantity in a Cart.
+_Avoid_: Order Item before the Order is confirmed.
 
-**Checkout (ขั้นตอนสั่งซื้อ)**:
-กระบวนการระบุที่อยู่ เลือกวิธีชำระเงิน ตรวจยอด และยืนยันคำสั่งซื้อ
-_Avoid_: Payment เพราะ checkout ไม่ได้หมายถึงการชำระเงินสำเร็จ
+**Checkout**:
+The process of entering a Shipping Address, choosing a Payment Method, reviewing totals, and confirming an Order.
+_Avoid_: Payment, as Checkout does not imply successful payment.
 
-**Order (ออเดอร์ / คำสั่งซื้อ)**:
-คำสั่งซื้อที่ลูกค้ายืนยันแล้ว ประกอบด้วยรายการสินค้า ผู้สั่ง ที่อยู่ ยอดรวม และสถานะการดำเนินการ
-_Avoid_: Cart, Transaction, Invoice
+**Order**:
+A purchase request confirmed by a Customer, containing Order Items, the customer, a Shipping Address, totals, and processing statuses.
+_Avoid_: Cart, Transaction, Invoice.
 
-**Order Item (รายการในออเดอร์)**:
-สินค้าหนึ่งรายการในคำสั่งซื้อ พร้อมจำนวนและราคาต่อหน่วย ณ เวลาสั่งซื้อ
-_Avoid_: Product เมื่อหมายถึงรายละเอียดรายการที่สั่งไปแล้ว
+**Order Item**:
+A Product listed in an Order, with its quantity and unit price at the time of ordering.
+_Avoid_: Product when referring specifically to the recorded purchase details.
 
-**Shipping Address (ที่อยู่จัดส่ง)**:
-ข้อมูลผู้รับและสถานที่ส่งสินค้าของออเดอร์ รวมชื่อ เบอร์โทร ที่อยู่ เขตหรืออำเภอ จังหวัด และรหัสไปรษณีย์
-_Avoid_: Billing Address, Profile Address
+**Shipping Address**:
+The recipient and delivery location for an Order, including name, phone number, street address, district, province, and postal code.
+_Avoid_: Billing Address, Profile Address.
 
-**Items Price (ยอดสินค้า)**:
-ผลรวมราคาสินค้าทุกรายการในออเดอร์ก่อนรวมค่าจัดส่ง
-_Avoid_: Total Price เมื่อยังไม่รวมค่าจัดส่ง
+**Items Price**:
+The sum of all item prices multiplied by their quantities in an Order, before shipping charges.
+_Avoid_: Total Price when shipping is not included.
 
-**Shipping Price (ค่าจัดส่ง)**:
-ค่าใช้จ่ายในการส่งสินค้าของออเดอร์ไปยังผู้รับ
-_Avoid_: Items Price
+**Shipping Price**:
+The charge for delivering an Order to its recipient.
+_Avoid_: Items Price.
 
-**Total Price (ยอดรวมออเดอร์)**:
-ยอดสินค้าและค่าจัดส่งรวมกัน เป็นจำนวนเงินที่ต้องชำระสำหรับออเดอร์
-_Avoid_: Revenue, Paid Amount เพราะยอดออเดอร์ไม่ได้ยืนยันว่าร้านได้รับเงินแล้ว
+**Total Price**:
+Items Price plus Shipping Price, representing the amount due for an Order.
+_Avoid_: Revenue, Paid Amount, as an order total does not confirm that the store received money.
 
-## การชำระเงินและสถานะ
+## Payment and Statuses
 
-**Payment Method (วิธีชำระเงิน)**:
-ช่องทางที่ลูกค้าเลือกเพื่อชำระค่าออเดอร์ โดยร้านสาธิตนี้ใช้ PromptPay
-_Avoid_: Payment Status
+**Payment Method**:
+The channel a Customer selects to pay for an Order. This demo store uses PromptPay.
+_Avoid_: Payment Status.
 
-**Payment Slip (สลิปโอนเงิน)**:
-รูปหลักฐานการโอนเงินที่ลูกค้าแนบให้ร้านตรวจสอบ
-_Avoid_: Receipt, Payment Confirmation เพราะการแนบสลิปยังไม่ใช่การยืนยันรับชำระ
+**Payment Slip**:
+An image of transfer evidence submitted by a Customer for the store to review.
+_Avoid_: Receipt, Payment Confirmation, as submitting a slip does not confirm receipt of payment.
 
-**Uploaded (แนบสลิปแล้ว)**:
-สถานะที่ออเดอร์มีสลิปโอนเงินแนบแล้วและพร้อมให้ตรวจสอบ
-_Avoid_: Paid, Verified
+**Uploaded**:
+The status indicating that an Order has an attached Payment Slip ready for review.
+_Avoid_: Paid, Verified.
 
-**Paid (ยืนยันชำระแล้ว)**:
-สถานะที่ออเดอร์ถูกบันทึกว่ายืนยันการชำระเงินแล้วหลังขั้นตอนตรวจด้วยคน
-_Avoid_: Uploaded, Automatically Verified
+**Paid**:
+The status recording that payment for an Order has been confirmed through manual review.
+_Avoid_: Uploaded, Automatically Verified.
 
-**Delivered (ส่งถึงแล้ว)**:
-สถานะที่ออเดอร์ถูกบันทึกว่าส่งสินค้าให้ผู้รับแล้ว
-_Avoid_: Shipped, Dispatched เพราะไม่มีสถานะระหว่างขนส่งแยกต่างหาก
+**Delivered**:
+The status recording that an Order's Products have been delivered to the recipient.
+_Avoid_: Shipped, Dispatched, as the store does not define a separate in-transit status.
 
-**Canceled (ยกเลิกแล้ว)**:
-สถานะที่ออเดอร์ถูกบันทึกว่ายกเลิกการดำเนินการ
-_Avoid_: Deleted, Refunded เพราะการยกเลิกไม่ได้หมายถึงการลบออเดอร์หรือคืนเงิน
+**Canceled**:
+The status recording that processing of an Order has been canceled.
+_Avoid_: Deleted, Refunded, as cancellation does not imply order deletion or a refund.

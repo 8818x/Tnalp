@@ -1,113 +1,113 @@
-# Tnalp — Project Context
+# Tnalp: Project Context
 
-เอกสารนี้สรุปบริบทและพฤติกรรมที่ตรวจพบในโค้ด ณ วันที่ 14 ตุลาคม 2026 สำหรับผู้พัฒนาและ agent ที่เข้ามาทำงานต่อ ใช้คำศัพท์ตาม [GLOSSARY.md](./GLOSSARY.md) และตรวจโค้ดอีกครั้งเมื่อพฤติกรรมเปลี่ยน
+This document summarizes the project context and behavior observed in the source code as of October 14, 2026. It is intended for developers and agents continuing work on the project. Use the vocabulary in [GLOSSARY.md](./GLOSSARY.md) and recheck the source when behavior changes.
 
-## เป้าหมายและขอบเขต
+## Purpose and Scope
 
-Tnalp เป็นร้านขายต้นไม้แบบ e-commerce สำหรับสาธิตและ portfolio ชื่อมาจากคำว่า plant ที่สะกดกลับด้าน ครอบคลุมการค้นหาสินค้า ตะกร้า สมัครสมาชิก สั่งซื้อ แนบสลิปโอนเงิน รีวิวสินค้า และหน้าจัดการของผู้ดูแล
+Tnalp is a plant store e-commerce demo and portfolio project. Its name is "plant" spelled backwards. It covers product search, a shopping cart, registration, ordering, payment-slip uploads, product reviews, and an admin dashboard.
 
-โปรเจกต์มีบริบทเดียวคือร้านต้นไม้ แยก frontend และ backend ตามหน้าที่ทางเทคนิค การชำระเงินใช้การโอนผ่าน PromptPay และตรวจสลิปด้วยคน ไม่มีการเชื่อม payment gateway หรือบริการตรวจสลิปอัตโนมัติ
+The project has one domain context: the plant store. The frontend and backend are technical divisions. Payments use PromptPay transfers with manual slip review. There is no payment gateway integration or automated slip verification service.
 
-## ผู้ใช้งานและข้อมูลหลัก
+## Users and Core Data
 
-- **User / Customer**: บัญชีผู้ใช้ทั่วไปสำหรับซื้อสินค้า ดูประวัติออเดอร์ และเขียนรีวิว
-- **Admin**: บัญชีที่มีสิทธิ์จัดการสินค้า ผู้ใช้ ออเดอร์ และดูสรุปยอดขาย
-- **Product**: สินค้าที่มีชื่อ slug รูป ราคา หมวดหมู่ แบรนด์ จำนวนคงเหลือ และรีวิว
-- **Order**: เก็บผู้สั่ง รายการสินค้า ที่อยู่ วิธีชำระเงิน ยอดรวม สลิป และสถานะต่าง ๆ
-- **Review**: คะแนนและความคิดเห็นที่เก็บอยู่ภายใน Product
+- **User / Customer**: A regular user account for buying products, viewing order history, and writing reviews.
+- **Admin**: An account with access to product, user, and order management, plus sales summaries.
+- **Product**: A catalog entry with a name, slug, image, price, category, brand, stock count, and reviews.
+- **Order**: Stores the customer, order items, shipping address, payment method, totals, payment slip, and status flags.
+- **Review**: A rating and comment stored within a Product.
 
-Cart อยู่ใน browser ไม่ใช่เอกสารในฐานข้อมูล ส่วน Order เก็บชื่อ รูป ราคา และจำนวนของแต่ละรายการ ณ เวลาสั่งซื้อ พร้อมอ้างอิง Product
+The Cart lives in the browser rather than as a database document. Each Order stores item names, images, prices, and quantities at the time of ordering, along with references to Products.
 
-## โครงสร้างและจุดเริ่มต้น
+## Structure and Entry Points
 
-| ตำแหน่ง | หน้าที่ |
+| Location | Responsibility |
 | --- | --- |
-| `backend/server.js` | โหลด environment เชื่อม MongoDB ตั้ง Express และ mount routes |
+| `backend/server.js` | Loads environment variables, connects to MongoDB, configures Express, and mounts routes |
 | `backend/models/` | Mongoose models: User, Product, Order |
-| `backend/routes/` | API สำหรับสินค้า ผู้ใช้ ออเดอร์ อัปโหลด และ seed |
-| `backend/utils.js` | สร้าง JWT และ middleware `isAuth`, `isAdmin` |
-| `backend/data.js`, `backend/seed.js` | ข้อมูลสาธิตและสคริปต์ตั้งต้นฐานข้อมูล |
-| `backend/uploads/` | ไฟล์อัปโหลดบน disk ที่เปิดให้เข้าถึงผ่าน `/uploads` |
-| `frontend/src/index.js`, `frontend/src/App.js` | จุดเริ่ม React และการประกอบหน้า/เส้นทาง |
-| `frontend/src/Store.js` | React Context และ reducer สำหรับผู้ใช้กับตะกร้า |
-| `frontend/src/screens/` | หน้าร้านและ checkout |
-| `frontend/src/management_screens/` | หน้าจัดการของ Admin |
-| `frontend/src/components/` | ส่วนประกอบร่วม รวมถึง route guards |
+| `backend/routes/` | Product, user, order, upload, and seed APIs |
+| `backend/utils.js` | JWT creation and the `isAuth` and `isAdmin` middleware |
+| `backend/data.js`, `backend/seed.js` | Demo data and the database bootstrap script |
+| `backend/uploads/` | Uploaded files stored on disk and served through `/uploads` |
+| `frontend/src/index.js`, `frontend/src/App.js` | React entry point, page composition, and routing |
+| `frontend/src/Store.js` | React Context and reducer for user and cart state |
+| `frontend/src/screens/` | Storefront and checkout screens |
+| `frontend/src/management_screens/` | Admin management screens |
+| `frontend/src/components/` | Shared components, including route guards |
 
-Backend ใช้ JavaScript ES modules, Express 4, Mongoose 7, bcryptjs, JWT และ Multer ส่วน frontend ใช้ React 18, CRA 5, React Router 6, Axios และ React-Bootstrap ดู dependency และ scripts จริงใน `package.json` ของแต่ละฝั่ง
+The backend uses JavaScript ES modules, Express 4, Mongoose 7, bcryptjs, JWT, and Multer. The frontend uses React 18, CRA 5, React Router 6, Axios, and React-Bootstrap. Consult each side's `package.json` for its dependencies and scripts.
 
-## ขั้นตอนหลัก
+## Main Flow
 
-1. ลูกค้าดู Product หรือค้นหาตามชื่อ หมวดหมู่ ช่วงราคา และคะแนน พร้อมเลือกการเรียงลำดับ
-2. เพิ่มสินค้าใน Cart แล้วเข้าสู่ระบบ ระบุ Shipping Address และเลือก PromptPay
-3. หน้า Preview Order คำนวณยอดและส่งข้อมูลไป `POST /api/orders`
-4. Backend บันทึก Order แล้วเริ่มลดสต็อกสินค้า ส่วน frontend ล้าง Cart และเปิดหน้าออเดอร์
-5. ลูกค้าโอนเงิน อัปโหลดรูปด้วย `POST /api/upload` แล้วแนบ URL ให้ Order ด้วย `PUT /api/orders/:id/upload`
-6. การยืนยันชำระเงินใช้ `PUT /api/orders/:id/pay` การบันทึกว่าส่งถึงแล้วใช้ `PUT /api/orders/:id/deliver`
-7. การยกเลิกใช้ `PUT /api/orders/:id/cancel` ซึ่งตั้งสถานะยกเลิกและพยายามคืนสต็อก
+1. Customers browse Products or search by name, category, price range, and rating, with sorting options.
+2. They add Products to the Cart, sign in, enter a Shipping Address, and select PromptPay.
+3. The Preview Order screen calculates totals and submits data to `POST /api/orders`.
+4. The backend saves the Order and starts reducing stock. The frontend clears the Cart and opens the order page.
+5. Customers transfer money, upload a slip image through `POST /api/upload`, and attach its URL to the Order through `PUT /api/orders/:id/upload`.
+6. Payment confirmation uses `PUT /api/orders/:id/pay`. Recording delivery uses `PUT /api/orders/:id/deliver`.
+7. Cancellation uses `PUT /api/orders/:id/cancel`, which marks the Order as canceled and attempts to restore stock.
 
-การอัปโหลดสลิปและการยืนยันชำระเงินเป็นคนละขั้นตอน API อัปโหลดคืนค่า `secure_url` แม้ไฟล์จริงจะเก็บบน local disk
+Uploading a slip and confirming payment are separate steps. The upload API returns `secure_url`, even though the file is stored on local disk.
 
-## กฎและสถานะที่โค้ดใช้อยู่
+## Current Rules and Statuses
 
-- ราคาแสดงเป็นเงินบาท ยอดสินค้าเท่ากับผลรวมราคาต่อหน่วยคูณจำนวน
-- Checkout คิดค่าจัดส่ง 0 บาทเมื่อ `province === 'Bangkok'` และ 100 บาทสำหรับค่าอื่น ยอดรวมเท่ากับยอดสินค้าและค่าจัดส่ง
-- Backend รับราคา จำนวน และยอดรวมจาก request โดยไม่ได้คำนวณราคาซ้ำจาก Product
-- Order ใช้ flags แยกกัน: `isUploaded`, `isPaid`, `isDelivered`, `isCanceled` พร้อมเวลาที่เกิดแต่ละสถานะ ไม่มี state machine ที่บังคับลำดับการเปลี่ยนสถานะ
-- การยืนยันชำระเงินตั้ง `paymentResult.status` เป็น `accept` ไม่มีผลตรวจจากธนาคาร
-- API รีวิวป้องกันรีวิวซ้ำด้วยชื่อผู้ใช้ ไม่ได้ตรวจว่าผู้รีวิวเคยซื้อสินค้าหรือไม่ คะแนนรวมเป็นค่าเฉลี่ยของรีวิวทั้งหมด
-- Dashboard รวม `totalPrice` ของออเดอร์ทั้งหมด โดยไม่ได้กรองเฉพาะออเดอร์ที่จ่ายแล้วหรือแยกออเดอร์ยกเลิก จึงไม่ควรตีความเป็นรายรับที่รับเงินจริง
+- Prices are displayed in Thai baht. Items Price is the sum of each unit price multiplied by its quantity.
+- Checkout charges 0 baht for shipping when `province === 'Bangkok'`, and 100 baht for any other value. Total Price is Items Price plus Shipping Price.
+- The backend accepts prices, quantities, and totals from the request without recalculating prices from Products.
+- Orders use independent flags: `isUploaded`, `isPaid`, `isDelivered`, and `isCanceled`, with associated timestamps. No state machine enforces a transition sequence.
+- Payment confirmation sets `paymentResult.status` to `accept`. It does not contain a bank verification result.
+- The review API prevents duplicate reviews by user name. It does not check whether the reviewer purchased the Product. The overall Rating is the average of all reviews.
+- The dashboard sums `totalPrice` across all Orders without filtering for paid Orders or excluding canceled Orders. This figure should not be interpreted as money actually received.
 
-## การยืนยันตัวตนและสิทธิ์
+## Authentication and Authorization
 
-JWT มีอายุ 30 วัน และมี `_id`, `name`, `email`, `isAdmin` API ที่ต้องเข้าสู่ระบบใช้ header `Authorization: Bearer <token>` Frontend เก็บ `userInfo` รวม token และข้อมูล checkout ใน localStorage
+JWTs expire after 30 days and contain `_id`, `name`, `email`, and `isAdmin`. Authenticated APIs use the `Authorization: Bearer <token>` header. The frontend stores `userInfo`, including the token, and checkout data in localStorage.
 
-การจัดการสินค้าและผู้ใช้ การดูรายการออเดอร์ทั้งหมด สรุปยอด การลบออเดอร์ และ seed API ใช้ทั้ง `isAuth` และ `isAdmin`
+Product and user management, listing all Orders, order summaries, order deletion, and the seed API use both `isAuth` and `isAdmin`.
 
-อย่างไรก็ตาม การอ่านออเดอร์ด้วย ID และ endpoints `pay`, `deliver`, `upload`, `cancel` ตรวจเพียง `isAuth` โดยไม่ตรวจเจ้าของออเดอร์หรือสิทธิ์ Admin จึงยังไม่รับประกันขอบเขตสิทธิ์ตามบทบาทใน API
+Reading an Order by ID and the `pay`, `deliver`, `upload`, and `cancel` endpoints check only `isAuth`. They do not check order ownership or Admin privileges, so the API does not fully enforce the intended role boundaries.
 
-## การรันในเครื่อง
+## Running Locally
 
-ใช้ MongoDB และ environment ตาม `backend/.env.example`: `MONGODB_URI`, `JWT_SECRET`, `PORT` ค่า Cloudinary ในตัวอย่างไม่ได้ถูกใช้โดย upload route ปัจจุบัน
+Use MongoDB and the environment variables in `backend/.env.example`: `MONGODB_URI`, `JWT_SECRET`, and `PORT`. The current upload route does not use the example Cloudinary variables.
 
 ```powershell
-# Terminal 1: จาก root ของ repository
+# Terminal 1: from the repository root
 cd backend
 Copy-Item .env.example .env
-# แก้ JWT_SECRET ใน .env และตรวจว่า MongoDB พร้อมใช้งาน
+# Set JWT_SECRET in .env and ensure MongoDB is available
 npm install
 node seed.js
 npm start
 ```
 
 ```powershell
-# Terminal 2: จาก root ของ repository
+# Terminal 2: from the repository root
 cd frontend
 npm install --legacy-peer-deps
-# ตาม run recipe ใน README สำหรับ Node 22 / CRA 5
+# Follow the README run recipe for Node 22 / CRA 5
 $env:NODE_OPTIONS = '--openssl-legacy-provider'
 npm start
 ```
 
-Frontend เปิดที่ `http://localhost:3000` และ proxy API ไป `http://localhost:9002` Backend ใช้ port 9002 เป็นค่าเริ่มต้น
+The frontend runs at `http://localhost:3000` and proxies API requests to `http://localhost:9002`. The backend defaults to port 9002.
 
-`node seed.js` และ `GET /api/seed` ลบ Product และ User เดิมแล้วสร้างข้อมูลสาธิตใหม่ โดยไม่ล้าง Order การ seed ซ้ำจึงอาจทำให้ Order เดิมอ้างอิงข้อมูลที่ถูกลบ ใช้กับฐานข้อมูลสาธิตเท่านั้น
+Both `node seed.js` and `GET /api/seed` delete existing Products and Users and recreate demo data without clearing Orders. Reseeding can leave existing Orders referencing deleted records. Use these operations only with a demo database.
 
-## ข้อจำกัดที่ต้องรู้ก่อนแก้ไข
+## Known Limitations
 
-- การลดและคืนสต็อกใช้ async callbacks ภายใน `map` โดยไม่รอทั้งหมด และไม่มี transaction จึงไม่รับประกันความสอดคล้องกับ Order
-- โค้ดยกเลิกค้น Product ด้วย `item._id` ซึ่งเป็น ID ของรายการย่อยใน Order แทน `item.product` การคืนสต็อกจึงมีข้อผิดพลาดจากการอ้างอิง ID
-- API ไม่ได้บังคับเงื่อนไขการเปลี่ยนสถานะหรือป้องกันการยกเลิกซ้ำ
-- Upload route ยังไม่ได้กำหนดตัวกรองชนิดไฟล์หรือขนาดสูงสุด ไฟล์ที่อัปโหลดเข้าถึงได้ผ่าน static URL
-- Backend ไม่มีชุดทดสอบที่ใช้งานได้ใน script `test` ส่วน `frontend/src/App.test.js` ยังเป็น test จาก CRA template ที่หา `learn react` ไม่ใช่การตรวจ flow ร้านค้า
+- Stock reduction and restoration use async callbacks inside `map` without waiting for all operations. There is no transaction to guarantee consistency with the Order.
+- Cancellation looks up Products using `item._id`, the Order subdocument ID, rather than `item.product`. This incorrect reference causes problems with stock restoration.
+- The API does not enforce status transition conditions or prevent repeated cancellation.
+- The upload route does not define file-type filters or a maximum file size. Uploaded files are accessible through static URLs.
+- The backend's `test` script does not provide a working test suite. `frontend/src/App.test.js` still contains the CRA template test for `learn react`, rather than a storefront flow test.
 
-ข้อจำกัดเหล่านี้เป็นสิ่งที่ตรวจพบจาก source ไม่ใช่ผลทดสอบระบบขณะรัน
+These limitations were identified by inspecting source code, not by testing the running system.
 
-## เอกสารที่เกี่ยวข้อง
+## Related Documents
 
-- [GLOSSARY.md](./GLOSSARY.md): คำศัพท์ธุรกิจที่ใช้ร่วมกัน
-- [README.md](./README.md): ภาพรวม การตั้งต้น และบัญชีสาธิต
-- [DESIGN.md](./DESIGN.md): แนวทาง UI และ accessibility
-- [docs/agents/domain.md](./docs/agents/domain.md): วิธีใช้เอกสาร domain เมื่อสำรวจโปรเจกต์
+- [GLOSSARY.md](./GLOSSARY.md): Shared business vocabulary.
+- [README.md](./README.md): Overview, setup instructions, and demo accounts.
+- [DESIGN.md](./DESIGN.md): UI and accessibility guidelines.
+- [docs/agents/domain.md](./docs/agents/domain.md): How agents should use domain documentation when exploring the project.
 
-เมื่อแก้ flow กฎราคา สถานะ หรือขอบเขตสิทธิ์ ให้ปรับ CONTEXT.md ตามพฤติกรรมใหม่ และแก้ GLOSSARY.md เมื่อความหมายของคำศัพท์เปลี่ยน
+Update CONTEXT.md when flows, pricing rules, statuses, or authorization boundaries change. Update GLOSSARY.md when the meaning of a domain term changes.
