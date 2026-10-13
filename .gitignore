@@ -31,3 +31,4 @@ yarn-error.log*
 # local test artifacts
 .playwright-mcp/
 home-after.png
+/*.png

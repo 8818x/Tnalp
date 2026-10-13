@@ -3,7 +3,6 @@ import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ListGroup from 'react-bootstrap/ListGroup'
 import Rating from "../components/Rating";
 import Badge from 'react-bootstrap/Badge'
 import Button from "react-bootstrap/esm/Button";
@@ -36,13 +35,12 @@ const reducer = (state, action) => {
     }
 };
 
-
 function ProductScreen() {
     const navigate = useNavigate();
     const params = useParams();
     const { slug } = params;
     const [{ loading, error, product, loadingCreateReview }, dispatch] = useReducer(reducer, {
-        product: [],
+        product: { reviews: [], rating: 0, numReviews: 0, countInStock: 0 },
         loading: true,
         error: '',
     });
@@ -51,15 +49,15 @@ function ProductScreen() {
 
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const [qty, setQty] = useState(1);
 
     useEffect(() => {
         const fetchData = async () => {
             dispatch({ type: 'FETCH_REQUEST' });
             try {
                 const result = await axios.get(`/api/products/slug/${slug}`);
-                dispatch({ type: 'FETCH_SUCCESS', payload: result.data })
-            }
-            catch (err) {
+                dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+            } catch (err) {
                 dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
             }
         };
@@ -68,18 +66,30 @@ function ProductScreen() {
 
     const { state, dispatch: ctxDispatch } = useContext(Store);
     const { cart, userInfo } = state;
-    const buynowHandler = async () => {
+
+    const formatDate = (d) =>
+        new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    const changeQty = (delta) =>
+        setQty((q) => Math.min(Math.max(1, q + delta), product.countInStock || 1));
+
+    const addItem = async () => {
         const exisItem = cart.cartItems.find((x) => x._id === product._id);
-        const quantity = exisItem ? exisItem.quantity + 1 : 1;
+        const inCart = exisItem ? exisItem.quantity : 0;
         const { data } = await axios.get(`/api/products/${product._id}`);
-        if (data.countInStock < quantity) {
+        if (data.countInStock < inCart + qty) {
             window.alert('Sorry, product is out of stock');
-            return;
+            return false;
         }
-        ctxDispatch(
-            { type: 'CART_ADD_ITEM', payload: { ...product, quantity }, }
-        );
-        navigate('/cart');
+        ctxDispatch({
+            type: 'CART_ADD_ITEM',
+            payload: { ...product, quantity: inCart + qty },
+        });
+        return true;
+    };
+
+    const buynowHandler = async () => {
+        if (await addItem()) navigate('/cart');
     };
 
     const submitHandler = async (e) => {
@@ -115,108 +125,114 @@ function ProductScreen() {
         }
     };
 
-    const addToCartHandler = async () => {
-        const exisItem = cart.cartItems.find((x) => x._id === product._id);
-        const quantity = exisItem ? exisItem.quantity + 1 : 1;
-        const { data } = await axios.get(`/api/products/${product._id}`);
-        if (data.countInStock < quantity) {
-            window.alert('Sorry, product is out of stock');
-            return;
-        }
-        ctxDispatch(
-            { type: 'CART_ADD_ITEM', payload: { ...product, quantity }, }
-        );
-    };
+    const scrollToReviews = () =>
+        reviewsRef.current && window.scrollTo({ behavior: 'smooth', top: reviewsRef.current.offsetTop });
 
     return loading ? (
         <LoadingBox />
     ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
     ) : (
-        <div>
-            <Row>
-                <Col md={6}>
-                    <img className="img-large"
-                        src={product.image}
-                        alt={product.name}
-                    ></img>
+        <div className="product-page">
+            <Helmet>
+                <title>{product.name}</title>
+            </Helmet>
+            <nav className="product-breadcrumb" aria-label="breadcrumb">
+                <Link to="/">Products</Link>
+                {' / '}
+                <Link to={`/search?category=${encodeURIComponent(product.category)}`}>{product.category}</Link>
+                {' / '}
+                <span>{product.name}</span>
+            </nav>
+            <Row className="g-4 align-items-start">
+                <Col md={6} lg={7}>
+                    <img className="img-large product-hero-img" src={product.image} alt={product.name}></img>
                 </Col>
-                <Col md={4}>
-                    <Card>
+                <Col md={6} lg={5}>
+                    <Card className="product-info-card">
                         <Card.Body>
-                    <ListGroup variant="flush">
-                        <ListGroup.Item>
-                            <Helmet>
-                                <title>{product.name}</title>
-                            </Helmet>
-                            <h1>{product.name}</h1>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Rating
-                                rating={product.rating}
-                                numReviews={product.numReviews}>
-                            </Rating>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            Price: ฿{product.price}
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            Description: {product.description}
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col>Status:</Col>
-                                <Col>{product.countInStock > 0 ?
-                                    <Badge bg="success">In stock</Badge>
-                                    :
-                                    <Badge bg="danger">Out of stock</Badge>}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col>Quantity:</Col>
-                                <Col>{product.countInStock} Pcs. Available</Col>
-                            </Row>
-                        </ListGroup.Item>
-                    </ListGroup>
-                    {product.countInStock > 0 && (
-                        <ListGroup className='product-lg d-flex' variant="flush">
-                            <div>
-                                <Button onClick={addToCartHandler} variant="outline-light" style={{ marginRight: '0.7rem' }}>
-                                    Add to cart
-                                </Button>
-                                <Button onClick={buynowHandler} variant="primary">
-                                    Buy now
-                                </Button>
+                            <h1 className="product-title-lg">{product.name}</h1>
+                            <div className="rating-row">
+                                <Rating
+                                    rating={product.rating}
+                                    caption={
+                                        <>
+                                            {product.rating ? product.rating.toFixed(1) : '—'}{' '}
+                                            <a
+                                                href="#reviews"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    scrollToReviews();
+                                                }}>
+                                                ({product.numReviews} reviews)
+                                            </a>
+                                        </>
+                                    }>
+                                </Rating>
                             </div>
-                        </ListGroup>
-                    )}
-                    </Card.Body>
+                            <hr className="soft-divider" />
+                            <div className="product-price-lg">฿{product.price}</div>
+                            <p className="product-desc">{product.description}</p>
+                            {product.countInStock > 0 ? (
+                                <>
+                                    <div className="product-availability">
+                                        <Badge bg="success">In stock · {product.countInStock} available</Badge>
+                                    </div>
+                                    <div className="qty-label">Quantity</div>
+                                    <div className="qty-stepper">
+                                        <Button variant='light' onClick={() => changeQty(-1)} disabled={qty <= 1} aria-label="Decrease quantity">−</Button>
+                                        <span className="qty-value">{qty}</span>
+                                        <Button variant='light' onClick={() => changeQty(1)} disabled={qty >= product.countInStock} aria-label="Increase quantity">+</Button>
+                                    </div>
+                                    <Button className="btn-cta" variant="primary" onClick={addItem}>
+                                        Add to cart
+                                    </Button>
+                                    <Button className="btn-cta" variant="outline-light" onClick={buynowHandler}>
+                                        Buy now
+                                    </Button>
+                                </>
+                            ) : (
+                                <div className="product-availability">
+                                    <Badge bg="danger">Out of stock</Badge>
+                                </div>
+                            )}
+                        </Card.Body>
                     </Card>
                 </Col>
             </Row>
-            <div className="my-3">
-                <h2 ref={reviewsRef}>Reviews</h2>
+
+            <section className="reviews-section" ref={reviewsRef}>
+                <h2>Reviews</h2>
+                {product.numReviews > 0 && (
+                    <div className="review-summary">
+                        <div className="review-score">
+                            {product.rating.toFixed(1)} <span>/ 5</span>
+                        </div>
+                        <div>
+                            <Rating rating={product.rating} caption=" " />
+                            <div className="review-count">Based on {product.numReviews} reviews</div>
+                        </div>
+                    </div>
+                )}
                 <div className="mb-3">
-                    {product.reviews.length === 0 && (
-                        <MessageBox>There is no review.</MessageBox>
-                    )}
+                    {product.reviews.length === 0 && <MessageBox>There is no review yet.</MessageBox>}
                 </div>
-                <ListGroup>
-                    {product.reviews.map((review) => (
-                        <ListGroup.Item key={review._id}>
-                            <strong>{review.name}</strong>
-                            <Rating rating={review.rating} caption=" "></Rating>
-                            <p>{review.createdAt.substring(0, 10)}</p>
-                            <p>{review.comment}</p>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
+                {product.reviews.map((review) => (
+                    <div className="review-item" key={review._id}>
+                        <div className="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{review.name}</strong>
+                                <Rating rating={review.rating} caption=" " />
+                            </div>
+                            <span className="review-date">{formatDate(review.createdAt)}</span>
+                        </div>
+                        <p className="review-comment mb-0">{review.comment}</p>
+                    </div>
+                ))}
                 <div className="my-3">
                     {userInfo ? (
                         <form onSubmit={submitHandler}>
-                            <h2>Write a customer review</h2>
+                            <h2 className="h4 mt-4">Write a customer review</h2>
                             <Form.Group className="mb-3" controlId="rating">
                                 <Form.Label>Rating</Form.Label>
                                 <Form.Select
@@ -249,16 +265,13 @@ function ProductScreen() {
                             </div>
                         </form>
                     ) : (
-                        <MessageBox>
-                            Please{' '}
-                            <Link to={`/signin?redirect=/product/${product.slug}`}>
-                                Sign In
-                            </Link>{' '}
-                            to write a review
-                        </MessageBox>
+                        <div className="signin-hint">
+                            Sign in to write a review —{' '}
+                            <Link to={`/signin?redirect=/product/${product.slug}`}>Sign In</Link>
+                        </div>
                     )}
                 </div>
-            </div>
+            </section>
         </div>
     );
 }
