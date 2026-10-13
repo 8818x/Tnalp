@@ -271,7 +271,7 @@ export default function UserEditScreen() {
                                         className="btn-cta w-auto"
                                         style={{ flex: '0 0 auto' }}
                                         onClick={leaveWithoutSaving}>
-                                        Cancel
+                                        ← Back to Users
                                     </Button>
                                     <Button
                                         variant="primary"
@@ -281,9 +281,11 @@ export default function UserEditScreen() {
                                         {loadingUpdate ? 'Saving…' : 'Save Changes'}
                                     </Button>
                                 </div>
-                                <div className="text-muted small mt-2 text-center">
-                                    {isDirty ? 'You have unsaved changes.' : 'All changes saved.'}
-                                </div>
+                                {isDirty && (
+                                    <div className="text-muted small mt-2 text-center">
+                                        You have unsaved changes.
+                                    </div>
+                                )}
                             </div>
 
                             <div className="dashboard-card">
