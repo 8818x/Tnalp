@@ -1057,3 +1057,18 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- admin users list ---------- */
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #e7efe9;
+  color: #1B4D3E;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
