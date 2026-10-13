@@ -235,7 +235,9 @@ export default function UserEditScreen() {
                                     <Form.Label>Role</Form.Label>
                                     <Form.Select value={isAdmin ? 'admin' : 'customer'} onChange={(e) => setIsAdmin(e.target.value === 'admin')}>
                                         <option value="admin">Administrator</option>
-                                        <option value="customer">Customer</option>
+                                        <option value="customer" disabled={isSelf && userInfo?.isAdmin}>
+                                            Customer
+                                        </option>
                                     </Form.Select>
                                     <div className="text-muted small mt-1">
                                         Administrators can access management features and modify store data.
@@ -244,6 +246,7 @@ export default function UserEditScreen() {
                                 {isSelf && (
                                     <div className="text-muted small">
                                         You are editing your own account.
+                                        {userInfo?.isAdmin && ' Your own role cannot be changed while signed in.'}
                                     </div>
                                 )}
                             </div>
