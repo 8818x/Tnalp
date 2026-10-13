@@ -1037,3 +1037,23 @@ a:focus-visible {
     padding: 0.2rem 0;
   }
 }
+
+/* ---------- admin product edit ---------- */
+
+.edit-product-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.product-form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .product-form-layout {
+    grid-template-columns: 1fr;
+  }
+}
