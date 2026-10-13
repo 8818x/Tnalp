@@ -284,7 +284,7 @@ export default function OrderScreen() {
                                     <MessageBox variant='success'>Paid at {order.paidAt}</MessageBox>
                                 )}
                                 <img
-                                    src='https://res.cloudinary.com/datnrdn28/image/upload/v1681071570/qrcode_j3d3tu.png'
+                                    src='/images/qrcode.png'
                                     alt='promptpay'
                                     className='img-fluid center-image'>
                                 </img>
