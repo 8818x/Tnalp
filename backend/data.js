@@ -1,6 +1,7 @@
 const data = {
     products: [
         {
+            _id: '6ace6be1000d3e2a32d8a11a',
             name: 'Classic Terracotta Pot',
             slug: 'classic-terracotta-pot',
             image: '/images/1.png',
@@ -16,6 +17,7 @@ const data = {
             ],
         },
         {
+            _id: '6ace6be1000d3e2a32d8a11b',
             name: 'Matte Ceramic Pot',
             slug: 'matte-ceramic-pot',
             image: '/images/2.png',
@@ -31,6 +33,7 @@ const data = {
             ],
         },
         {
+            _id: '6ace6be1000d3e2a32d8a11c',
             name: 'Terracotta Pot with Saucer',
             slug: 'terracotta-pot-saucer',
             image: '/images/3.png',
@@ -44,6 +47,7 @@ const data = {
             reviews: [],
         },
         {
+            _id: '6ace6be1000d3e2a32d8a11d',
             name: 'Spiral Planter Stand',
             slug: 'spiral-planter-stand',
             image: '/images/4.png',
@@ -57,6 +61,7 @@ const data = {
             reviews: [],
         },
         {
+            _id: '6ace6be1000d3e2a32d8a11e',
             name: 'Wooden Geometric Planter',
             slug: 'wooden-geometric-planter',
             image: '/images/5.png',
@@ -70,6 +75,7 @@ const data = {
             reviews: [],
         },
         {
+            _id: '6ace6be1000d3e2a32d8a11f',
             name: 'Potted Basil Geo Planter',
             slug: 'potted-basil-geo-planter',
             image: '/images/6.png',
