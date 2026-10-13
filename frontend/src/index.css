@@ -699,3 +699,55 @@ a:focus-visible {
   text-decoration: underline;
   text-underline-offset: 8px;
 }
+
+/* ---------- signup extras ---------- */
+
+.pw-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  color: #9ca3af;
+}
+
+.pw-hints .ok {
+  color: #15803d;
+}
+
+.pw-mismatch {
+  color: #b91c1c;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+}
+
+.auth-terms {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin: 0.25rem 0 1rem;
+}
+
+.auth-terms a {
+  color: #1B4D3E;
+}
+
+.legal-text {
+  color: #374151;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 576px) {
+  .auth-page {
+    padding: 32px 16px;
+  }
+
+  .auth-card {
+    border: none;
+    box-shadow: none;
+  }
+
+  .auth-card .card-body {
+    padding: 24px 20px;
+  }
+}

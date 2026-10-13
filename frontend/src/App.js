@@ -15,6 +15,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import ShippingAddressScreen from './screens/ShippingAddressScreen';
 import SignupScreen from './screens/SignupScreen';
+import LegalScreen from './screens/LegalScreen';
 import PaymentMethodScreen from './screens/PaymentMethodScreen';
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
 import OrderScreen from './screens/OrderScreen';
@@ -165,6 +166,8 @@ function App() {
                             <Route path='/search' element={<SearchScreen />}></Route>
                             <Route path='/signin' element={<SigninScreen />}></Route>
                             <Route path='/signup' element={<SignupScreen />}></Route>
+                            <Route path='/terms' element={<LegalScreen kind='terms' />}></Route>
+                            <Route path='/privacy' element={<LegalScreen kind='privacy' />}></Route>
                             <Route
                                 path='/profile'
                                 element={
