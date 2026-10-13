@@ -28,19 +28,39 @@ function Product(props) {
     }
 
     return (
-        <Card>
-            <Link to={`/product/${product.slug}`}>
-                <img src={product.image} className='card-img-top' alt={product.name} />
+        <Card className='product-card h-100'>
+            <Link to={`/product/${product.slug}`} className='product-img-link'>
+                <img src={product.image} className='card-img-top product-img' alt={product.name} />
             </Link>
-            <Card.Body>
-                <Link to={`/product/${product.slug}`} style={{color: '#333333', textDecoration: 'none', fontWeight:'bold'}}>
-                    <Card.Title>{product.name}</Card.Title>
+            <Card.Body className='d-flex flex-column p-3'>
+                <Link
+                    to={`/product/${product.slug}`}
+                    className='product-title-link'>
+                    <Card.Title className='product-title'>{product.name}</Card.Title>
                 </Link>
+                <div className='product-category'>{product.category}</div>
                 <Rating rating={product.rating} numReviews={product.numReviews} />
-                <Card.Text>฿{product.price}</Card.Text>
-                {product.countInStock === 0 ? <Button variant='light' disabled>Out of Stock</Button>
-                    : <Button onClick={() => addToCartHandler(product)} variant="primary">Add to cart</Button>
-                }
+                <Card.Text className='product-price'>฿{product.price}</Card.Text>
+                <div className='mt-auto'>
+                    {product.countInStock === 0 ? (
+                        <>
+                            <div className='product-stock out'>Out of stock</div>
+                            <Button variant='light' disabled className='btn-product'>Out of Stock</Button>
+                        </>
+                    ) : (
+                        <>
+                            {product.countInStock <= 5 && (
+                                <div className='product-stock low'>Low stock — only {product.countInStock} left</div>
+                            )}
+                            <Button
+                                onClick={() => addToCartHandler(product)}
+                                variant='primary'
+                                className='btn-product'>
+                                Add to cart
+                            </Button>
+                        </>
+                    )}
+                </div>
             </Card.Body>
         </Card>
     );

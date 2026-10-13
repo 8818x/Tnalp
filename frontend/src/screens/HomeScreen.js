@@ -47,7 +47,8 @@ function HomeScreen() {
             <Helmet>
                 <title>Tnalp</title>
             </Helmet>
-            <h1 className="my-3">Featured Products</h1>
+            <h1 className="page-title my-3">Featured Products</h1>
+            <p className="page-subtitle">Discover our most popular pots, planters and potted plants</p>
             <div className="products">
                 {loading ? (
                     <LoadingBox />

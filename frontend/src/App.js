@@ -83,6 +83,7 @@ function App() {
                                 </Container>
                                 <Nav className="me-auto w-100 justify-content-end">
                                     <Link to="/cart" className='nav-link'>
+                                        <i className='fas fa-shopping-cart me-1'></i>
                                         Cart {cart.cartItems.length > 0 && (
                                             <Badge pill bg="danger">
                                                 {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
@@ -239,8 +240,25 @@ function App() {
                         </Routes>
                     </Container>
                 </main>
-                <footer>
-                    <div className='text-center'>© 2023 Tnalp. All rights reserved.</div>
+                <footer className='site-footer'>
+                    <Container className='d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 py-3'>
+                        <div><strong>Tnalp</strong> — plants, pots &amp; planters</div>
+                        <Nav className='footer-nav'>
+                            <LinkContainer to="/">
+                                <Nav.Link>Products</Nav.Link>
+                            </LinkContainer>
+                            <LinkContainer to="/cart">
+                                <Nav.Link>Cart</Nav.Link>
+                            </LinkContainer>
+                            <LinkContainer to="/orderhistory">
+                                <Nav.Link>Orders</Nav.Link>
+                            </LinkContainer>
+                            <LinkContainer to="/profile">
+                                <Nav.Link>Account</Nav.Link>
+                            </LinkContainer>
+                        </Nav>
+                        <div className='text-muted small'>© 2023 Tnalp. All rights reserved.</div>
+                    </Container>
                 </footer>
             </div>
         </BrowserRouter>
