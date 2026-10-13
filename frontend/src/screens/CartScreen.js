@@ -4,12 +4,10 @@ import { Helmet } from 'react-helmet-async';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MessageBox from '../components/MessageBox';
-import ListGroup from 'react-bootstrap/ListGroup';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from 'react-bootstrap/Button'
-import ListGroupItem from 'react-bootstrap/esm/ListGroupItem';
+import Button from 'react-bootstrap/Button';
 import axios from 'axios';
-import { Card, Form } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 export default function CartScreen() {
     const navigate = useNavigate();
@@ -17,6 +15,9 @@ export default function CartScreen() {
     const {
         cart: { cartItems },
     } = state;
+
+    const itemCount = cartItems.reduce((a, c) => a + c.quantity, 0);
+    const subtotal = cartItems.reduce((a, c) => a + c.price * c.quantity, 0);
 
     const updateCartHandler = async (item, quantity) => {
         const { data } = await axios.get(`/api/products/${item._id}`);
@@ -38,90 +39,95 @@ export default function CartScreen() {
     };
 
     return (
-        <div>
+        <div className="cart-page">
             <Helmet>
                 <title>Shopping Cart</title>
             </Helmet>
-            <h1>Shopping Cart</h1>
-            <Row>
-                <Col md={8}>
+            <h1 className="page-title">Shopping Cart</h1>
+            <p className="page-subtitle">
+                {itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart
+            </p>
+            <Row className="g-4">
+                <Col lg={8}>
                     {cartItems.length === 0 ? (
                         <MessageBox>
-                            Cart is empty. <Link to='/' style={{color: '#1B4D3E', textDecoration: 'none', fontWeight: 'bold'}}>Go Shopping</Link>
+                            Cart is empty.{' '}
+                            <Link to='/' className='continue-shopping' style={{ marginTop: 0 }}>
+                                ← Go shopping
+                            </Link>
                         </MessageBox>
                     ) : (
-                        <ListGroup>
+                        <div>
                             {cartItems.map((item) => (
-                                <ListGroup.Item key={item._id}>
-                                    <Row className="align-items-center">
-                                        <Col md={4}>
-                                            <img
-                                                src={item.image}
-                                                alt={item.name}
-                                                className="img-fluid rounded img-thumbnail no-thumbnail-border">
-                                            </img>{' '}
-                                            <Link to={`/product/${item.slug}`} style={{color: '#194d31', textDecoration: 'none', fontWeight: '600'}}>{item.name}</Link>
-                                        </Col>
-                                        <Col md={3}>
-                                            <div className="quantity-controls d-flex">
-                                                <Button variant="light" onClick={() => updateCartHandler(item, item.quantity - 1)} disabled={item.quantity === 1}>
-                                                    <i className='fas fa-minus-circle'></i>
-                                                </Button>{' '}
-                                                <div className="quantity-dropdown">
-                                                    <Form.Select value={item.quantity} onChange={(e) => updateCartHandler(item, parseInt(e.target.value))}>
-                                                        {[...Array(item.countInStock).keys()].map((x) => (
-                                                            <option key={x + 1} value={x + 1}>
-                                                                {x + 1}
-                                                            </option>
-                                                        ))}
-                                                    </Form.Select>
-                                                </div>
-                                                <Button variant="light" onClick={() => updateCartHandler(item, item.quantity + 1)} disabled={item.quantity === item.countInStock}>
-                                                    <i className='fas fa-plus-circle'></i>
-                                                </Button>
-                                            </div>
-                                        </Col>
-
-                                        <Col md={3}>฿{item.price}</Col>
-                                        <Col md={2}>
-                                            <Button variant="light" onClick={() => removeCartHandler(item)}>
-                                                <i className="fas fa-trash"></i>
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                </ListGroup.Item>
+                                <div className="cart-item" key={item._id}>
+                                    <Link to={`/product/${item.slug}`} className="cart-item-img">
+                                        <img src={item.image} alt={item.name} />
+                                    </Link>
+                                    <div className="cart-item-info">
+                                        <Link to={`/product/${item.slug}`} className="cart-item-name">
+                                            {item.name}
+                                        </Link>
+                                        <div className="cart-item-variant">{item.category}</div>
+                                        <div className="cart-item-unit">฿{item.price} each</div>
+                                    </div>
+                                    <div className="qty-stepper cart-qty">
+                                        <Button
+                                            variant='light'
+                                            onClick={() => updateCartHandler(item, item.quantity - 1)}
+                                            disabled={item.quantity <= 1}
+                                            aria-label="Decrease quantity">−</Button>
+                                        <span className="qty-value">{item.quantity}</span>
+                                        <Button
+                                            variant='light'
+                                            onClick={() => updateCartHandler(item, item.quantity + 1)}
+                                            disabled={item.quantity >= item.countInStock}
+                                            aria-label="Increase quantity">+</Button>
+                                    </div>
+                                    <div className="cart-item-total">฿{item.price * item.quantity}</div>
+                                    <Button
+                                        variant='light'
+                                        className='cart-remove'
+                                        onClick={() => removeCartHandler(item)}
+                                        aria-label="Remove item">
+                                        <i className="fas fa-trash"></i>
+                                    </Button>
+                                </div>
                             ))}
-                        </ListGroup>
+                        </div>
                     )}
                 </Col>
-                <Col md={4}>
-                    <Card>
+                <Col lg={4}>
+                    <Card className="order-summary">
                         <Card.Body>
-                    <ListGroup variant="flush">
-                        <ListGroup.Item>
-                            <h3>
-                                Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
-                                items) : ฿
-                                {cartItems.reduce((a, c) => a + c.price * c.quantity, 0)}
-                            </h3>
-                        </ListGroup.Item>
-                        <ListGroupItem>
-                            <div className='d-grid'>
-                                <Button
-                                    type='button'
-                                    variant='primary'
-                                    onClick={checkoutHandler}
-                                    disabled={cartItems.length === 0}>
-                                    Proceed to Checkout
-                                </Button>
+                            <h3 className="order-summary-title">Order Summary</h3>
+                            <div className="summary-row">
+                                <span>Subtotal ({itemCount} {itemCount === 1 ? 'item' : 'items'})</span>
+                                <span>฿{subtotal}</span>
                             </div>
-                        </ListGroupItem>
-                    </ListGroup>
-                    </Card.Body>
+                            <div className="summary-row muted">
+                                <span>Shipping</span>
+                                <span>At checkout</span>
+                            </div>
+                            <hr className="soft-divider" />
+                            <div className="summary-row summary-total">
+                                <span>Total</span>
+                                <span>฿{subtotal}</span>
+                            </div>
+                            <Button
+                                type='button'
+                                variant='primary'
+                                className='btn-cta'
+                                onClick={checkoutHandler}
+                                disabled={cartItems.length === 0}>
+                                Proceed to Checkout
+                            </Button>
+                            <div className="text-center">
+                                <Link to="/" className="continue-shopping">Continue shopping</Link>
+                            </div>
+                        </Card.Body>
                     </Card>
                 </Col>
             </Row>
         </div>
     )
 }
-
