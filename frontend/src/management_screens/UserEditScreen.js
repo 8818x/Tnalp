@@ -279,10 +279,20 @@ export default function UserEditScreen() {
 
                             <div className="dashboard-card">
                                 <h2 className="dashboard-card-title text-danger">Danger Zone</h2>
-                                <p className="page-subtitle mb-2">
-                                    Permanently remove this account. Order history should remain available.
-                                </p>
-                                <Button variant="outline-danger" onClick={deleteHandler}>
+                                {isSelf ? (
+                                    <p className="page-subtitle mb-2">
+                                        You cannot delete the account you are signed in with.
+                                    </p>
+                                ) : (
+                                    <p className="page-subtitle mb-2">
+                                        Permanently remove this account. Order history should remain available.
+                                    </p>
+                                )}
+                                <Button
+                                    variant="outline-danger"
+                                    onClick={deleteHandler}
+                                    disabled={isSelf}
+                                    title={isSelf ? 'You cannot delete the account you are signed in with.' : undefined}>
                                     Delete User
                                 </Button>
                             </div>
