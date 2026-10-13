@@ -91,12 +91,14 @@ const data = {
     ],
     users: [
         {
+            _id: '6ace6554f76cb4e54b9da58e',
             name: 'admin',
             email: 'admin@tnalp.com',
             password: '$2a$10$NK/y4WjilmUDuxrI6MEt8Obw3X.vABE9y/243ojEWVmuvWyQwePCC',
             isAdmin: true,
         },
         {
+            _id: '6ace6554f76cb4e54b9da58f',
             name: 'user',
             email: 'user@tnalp.com',
             password: '$2a$10$3yFAMSi8K3vLoHCya445uuPvKjFUMpAFBI77tqLEoeWR8ecsidT.S',

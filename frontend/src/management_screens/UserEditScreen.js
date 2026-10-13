@@ -264,11 +264,20 @@ export default function UserEditScreen() {
                             </div>
 
                             <div className="dashboard-card">
-                                <div className="d-flex flex-wrap justify-content-between gap-2">
-                                    <Button variant="light" type="button" onClick={leaveWithoutSaving}>
+                                <div className="d-flex gap-2">
+                                    <Button
+                                        variant="light"
+                                        type="button"
+                                        className="btn-cta w-auto"
+                                        style={{ flex: '0 0 auto' }}
+                                        onClick={leaveWithoutSaving}>
                                         Cancel
                                     </Button>
-                                    <Button variant="primary" type="submit" className="btn-cta flex-grow-1 mx-sm-2" disabled={loadingUpdate}>
+                                    <Button
+                                        variant="primary"
+                                        type="submit"
+                                        className="btn-cta w-auto flex-grow-1"
+                                        disabled={loadingUpdate}>
                                         {loadingUpdate ? 'Saving…' : 'Save Changes'}
                                     </Button>
                                 </div>
