@@ -91,6 +91,23 @@ function App() {
                                             </Badge>
                                         )}
                                     </Link>
+                                    {userInfo && userInfo.isAdmin && (
+                                        <NavDropdown title='Management' id='admin-nav-dropdown'>
+                                            <LinkContainer to='/admin/dashboard'>
+                                                <NavDropdown.Item>Dashboard</NavDropdown.Item>
+                                            </LinkContainer>
+                                            <LinkContainer to='/admin/products'>
+                                                <NavDropdown.Item>Products</NavDropdown.Item>
+                                            </LinkContainer>
+                                            <LinkContainer to='/admin/orders'>
+                                                <NavDropdown.Item>Orders</NavDropdown.Item>
+                                            </LinkContainer>
+                                            <LinkContainer to='/admin/users'>
+                                                <NavDropdown.Item>Users</NavDropdown.Item>
+                                            </LinkContainer>
+                                        </NavDropdown>
+                                    )
+                                    }
                                     {userInfo ? (
                                         <NavDropdown title={userInfo.name} id='basic-nav-dropdown'>
                                             <LinkContainer to='/profile'>
@@ -115,23 +132,6 @@ function App() {
                                             Sign In
                                         </NavLink>
                                     )}
-                                    {userInfo && userInfo.isAdmin && (
-                                        <NavDropdown title='Management' id='admin-nav-dropdown'>
-                                            <LinkContainer to='/admin/dashboard'>
-                                                <NavDropdown.Item>Dashboard</NavDropdown.Item>
-                                            </LinkContainer>
-                                            <LinkContainer to='/admin/products'>
-                                                <NavDropdown.Item>Products</NavDropdown.Item>
-                                            </LinkContainer>
-                                            <LinkContainer to='/admin/orders'>
-                                                <NavDropdown.Item>Orders</NavDropdown.Item>
-                                            </LinkContainer>
-                                            <LinkContainer to='/admin/users'>
-                                                <NavDropdown.Item>Users</NavDropdown.Item>
-                                            </LinkContainer>
-                                        </NavDropdown>
-                                    )
-                                    }
                                 </Nav>
                             </Navbar.Collapse>
                         </Container>
