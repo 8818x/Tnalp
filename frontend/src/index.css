@@ -700,6 +700,85 @@ a:focus-visible {
   text-underline-offset: 8px;
 }
 
+/* ---------- navbar polish (round 2) ---------- */
+
+.App-header .navbar .container {
+  max-width: 1200px;
+}
+
+.nav-btn {
+  margin-right: 0.9rem;
+}
+
+.navbar-brand {
+  margin-right: 0.5rem;
+  transition: opacity 0.15s ease;
+}
+
+.navbar-brand:hover {
+  opacity: 0.85;
+}
+
+.nav-btn:hover {
+  opacity: 0.8;
+}
+
+.nav-account {
+  margin-left: auto;
+}
+
+.nav-account .nav-link {
+  margin-left: 1.5rem;
+}
+
+.nav-account .nav-link:hover {
+  opacity: 0.85;
+}
+
+.search-form {
+  max-width: 520px;
+}
+
+.search-form .btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.search-form .form-control {
+  min-height: 44px;
+}
+
+.navbar-nav .nav-dropdown-toggle {
+  padding: 0.5rem 0.9rem;
+}
+
+@media (max-width: 991px) {
+  .nav-account {
+    margin-left: 0.75rem;
+  }
+
+  .nav-account .nav-link {
+    margin-left: 0.5rem;
+  }
+
+  .navbar-toggler {
+    border: none;
+    box-shadow: none !important;
+  }
+
+  .navbar-toggler .navbar-toggler-icon {
+    display: none;
+  }
+
+  .navbar-toggler::after {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    content: '\f002';
+    color: #ffffff;
+    font-size: 1.05rem;
+  }
+}
+
 /* ---------- signup extras ---------- */
 
 .pw-hints {

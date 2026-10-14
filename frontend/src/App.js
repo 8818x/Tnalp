@@ -77,20 +77,12 @@ function App() {
                             <LinkContainer to="/">
                                 <Navbar.Brand>Tnalp</Navbar.Brand>
                             </LinkContainer>
-                            <Navbar.Toggle aria-controls='basic-navbar-nav' />
+                            <Navbar.Toggle aria-controls='basic-navbar-nav' aria-label='Toggle search and menu' />
                             <Navbar.Collapse id='basic-navbar-nav'>
                                 <Container className="container-fluid">
                                     <SearchBox />
                                 </Container>
                                 <Nav className="me-auto w-100 justify-content-end">
-                                    <Link to="/cart" className='nav-link'>
-                                        <i className='fas fa-shopping-cart me-1'></i>
-                                        Cart {cart.cartItems.length > 0 && (
-                                            <Badge pill bg="danger">
-                                                {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
-                                            </Badge>
-                                        )}
-                                    </Link>
                                     {userInfo && userInfo.isAdmin && (
                                         <NavDropdown title='Management' id='admin-nav-dropdown'>
                                             <LinkContainer to='/admin/dashboard'>
@@ -108,32 +100,42 @@ function App() {
                                         </NavDropdown>
                                     )
                                     }
-                                    {userInfo ? (
-                                        <NavDropdown title={userInfo.name} id='basic-nav-dropdown'>
-                                            <LinkContainer to='/profile'>
-                                                <NavDropdown.Item>User Profile</NavDropdown.Item>
-                                            </LinkContainer>
-                                            <LinkContainer to='/orderhistory'>
-                                                <NavDropdown.Item>Order History</NavDropdown.Item>
-                                            </LinkContainer>
-                                            <NavDropdown.Divider />
-                                            <Link
-                                                className='dropdown-item'
-                                                to='#signout'
-                                                onClick={signoutHandler}>
-                                                Sign Out
-                                            </Link>
-                                        </NavDropdown>
-                                    ) : (
-                                        <NavLink
-                                            className={({ isActive }) =>
-                                                'nav-link' + (isActive ? ' active-signin' : '')}
-                                            to='/signin'>
-                                            Sign In
-                                        </NavLink>
-                                    )}
                                 </Nav>
                             </Navbar.Collapse>
+                            <Nav className="nav-account flex-row align-items-center">
+                                <Link to="/cart" className='nav-link'>
+                                    <i className='fas fa-shopping-cart me-1'></i>
+                                    Cart {cart.cartItems.length > 0 && (
+                                        <Badge pill bg="danger">
+                                            {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
+                                        </Badge>
+                                    )}
+                                </Link>
+                                {userInfo ? (
+                                    <NavDropdown title={userInfo.name} id='basic-nav-dropdown' align="end">
+                                        <LinkContainer to='/profile'>
+                                            <NavDropdown.Item>User Profile</NavDropdown.Item>
+                                        </LinkContainer>
+                                        <LinkContainer to='/orderhistory'>
+                                            <NavDropdown.Item>Order History</NavDropdown.Item>
+                                        </LinkContainer>
+                                        <NavDropdown.Divider />
+                                        <Link
+                                            className='dropdown-item'
+                                            to='#signout'
+                                            onClick={signoutHandler}>
+                                            Sign Out
+                                        </Link>
+                                    </NavDropdown>
+                                ) : (
+                                    <NavLink
+                                        className={({ isActive }) =>
+                                            'nav-link' + (isActive ? ' active-signin' : '')}
+                                        to='/signin'>
+                                        Sign In
+                                    </NavLink>
+                                )}
+                            </Nav>
                         </Container>
                     </Navbar>
                 </header>
