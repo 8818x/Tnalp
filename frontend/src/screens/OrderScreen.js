@@ -1,20 +1,23 @@
-import axios from "axios";
 import React, { useContext, useEffect, useReducer, useState } from "react";
-import { Button, Card, Col, Form, ListGroup, Row } from "react-bootstrap";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/esm/Button";
+import Col from "react-bootstrap/esm/Col";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/esm/Row";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import LoadingBox from "../components/LoadingBox";
-import MessageBox from '../components/MessageBox';
 import { Store } from "../Store";
 import { getError } from "../utils";
-import { toast } from 'react-toastify';
+import axios from "axios";
 
-function reducer(state, action) {
+const reducer = (state, action) => {
     switch (action.type) {
         case 'FETCH_REQUEST':
-            return { ...state, loading: true, error: '' };
+            return { ...state, loading: true };
         case 'FETCH_SUCCESS':
-            return { ...state, loading: false, order: action.payload, error: '' };
+            return { ...state, order: action.payload, loading: false };
         case 'FETCH_FAIL':
             return { ...state, loading: false, error: action.payload };
         case 'PAY_REQUEST':
@@ -32,11 +35,15 @@ function reducer(state, action) {
         case 'DELIVER_FAIL':
             return { ...state, loadingDeliver: false };
         case 'DELIVER_RESET':
-            return {
-                ...state,
-                loadingDeliver: false,
-                successDeliver: false,
-            };
+            return { ...state, loadingDeliver: false, successDeliver: false };
+        case 'CANCEL_REQUEST':
+            return { ...state, loadingCancel: true };
+        case 'CANCEL_SUCCESS':
+            return { ...state, loadingCancel: false, successCancel: true };
+        case 'CANCEL_FAIL':
+            return { ...state, loadingCancel: false };
+        case 'CANCEL_RESET':
+            return { ...state, loadingCancel: false, successCancel: false };
         case 'UPDATE_REQUEST':
             return { ...state, loadingUpdate: true };
         case 'UPDATE_SUCCESS':
@@ -46,49 +53,39 @@ function reducer(state, action) {
         case 'UPLOAD_REQUEST':
             return { ...state, loadingUpload: true, errorUpload: '' };
         case 'UPLOAD_SUCCESS':
-            return {
-                ...state,
-                loadingUpload: false,
-                errorUpload: '',
-            };
+            return { ...state, loadingUpload: false, errorUpload: '' };
         case 'UPLOAD_FAIL':
             return { ...state, loadingUpload: false, errorUpload: action.payload };
-        case 'CANCEL_REQUEST':
-            return { ...state, loadingCancel: true };
-        case 'CANCEL_SUCCESS':
-            return { ...state, loadingCancel: false, successCancel: true };
-        case 'CANCEL_FAIL':
-            return { ...state, loadingCancel: false };
-        case 'CANCEL_RESET':
-            return {
-                ...state,
-                loadingCancel: false,
-                successCancel: false,
-            };
         default:
             return state;
     }
-}
+};
+
+const money = (n) => '฿' + Number(n || 0).toLocaleString('en-US');
+const fullDate = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export default function OrderScreen() {
-    const navigate = useNavigate();
     const { state } = useContext(Store);
     const { userInfo } = state;
+    const navigate = useNavigate();
     const params = useParams();
     const { id: orderId } = params;
-    const [{ loading,
-        error,
-        order,
-        successPay,
-        loadingPay,
-        loadingDeliver,
-        successDeliver,
-        loadingUpdate,
-        loadingUpload,
-        loadingCancel,
-        successCancel,
 
-    }, dispatch
+    const [
+        {
+            loading,
+            error,
+            order,
+            successPay,
+            loadingPay,
+            successDeliver,
+            loadingDeliver,
+            successCancel,
+            loadingCancel,
+            loadingUpdate,
+            loadingUpload,
+        },
+        dispatch,
     ] = useReducer(reducer, {
         loading: true,
         order: {},
@@ -98,7 +95,6 @@ export default function OrderScreen() {
     });
 
     const [imageUploaded, setImage] = useState('');
-    const [already, setAlready] = useState(false);
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -112,15 +108,15 @@ export default function OrderScreen() {
             } catch (err) {
                 dispatch({ type: 'FETCH__FAIL', payload: getError(err) });
             }
-        }
+        };
         if (!userInfo) {
-            return navigate('/signin')
+            return navigate('/signin');
         }
         if (!order._id || successPay || successDeliver || successCancel || loadingUpdate || (order._id && order._id !== orderId)) {
             fetchOrder();
         }
         if (successPay) {
-            dispatch({ type: 'PAY_RESET' })
+            dispatch({ type: 'PAY_RESET' });
         }
         if (successDeliver) {
             dispatch({ type: 'DELIVER_RESET' });
@@ -128,12 +124,11 @@ export default function OrderScreen() {
         if (successCancel) {
             dispatch({ type: 'CANCEL_RESET' });
         }
-
-    }, [order, userInfo, orderId, navigate, successPay, successDeliver, successCancel, loadingUpdate])
+    }, [order, userInfo, orderId, navigate, successPay, successDeliver, successCancel, loadingUpdate]);
 
     async function paymentHandler() {
         try {
-            dispatch({ type: 'PAY_REQUEST' })
+            dispatch({ type: 'PAY_REQUEST' });
             const { data } = await axios.put(
                 `/api/orders/${order._id}/pay`,
                 {},
@@ -145,13 +140,14 @@ export default function OrderScreen() {
             toast.success('Paid Successfully');
         } catch (err) {
             toast.error(getError(err));
-            dispatch({ type: 'PAY_FAIL' })
+            dispatch({ type: 'PAY_FAIL' });
         }
     }
 
     async function cancelHandler() {
+        if (!window.confirm(`Cancel this order?\n\nOrder #${order._id.slice(-6)} will be cancelled.`)) return;
         try {
-            dispatch({ type: 'CANCEL_REQUEST' })
+            dispatch({ type: 'CANCEL_REQUEST' });
             const { data } = await axios.put(
                 `/api/orders/${order._id}/cancel`,
                 {},
@@ -160,10 +156,10 @@ export default function OrderScreen() {
                 }
             );
             dispatch({ type: 'CANCEL_SUCCESS', payload: data });
-            toast.success('Cancel Successfully');
+            toast.success('Order cancelled');
         } catch (err) {
             toast.error(getError(err));
-            dispatch({ type: 'CANCEL_FAIL' })
+            dispatch({ type: 'CANCEL_FAIL' });
         }
     }
 
@@ -187,6 +183,16 @@ export default function OrderScreen() {
 
     const uploadFileHandler = async (e) => {
         const file = e.target.files[0];
+        if (!file) return;
+        const okTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!okTypes.includes(file.type)) {
+            toast.error('File must be JPG, PNG or WebP.');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('Maximum file size is 5 MB.');
+            return;
+        }
         const bodyFormData = new FormData();
         bodyFormData.append('file', file);
         try {
@@ -198,15 +204,12 @@ export default function OrderScreen() {
                 },
             });
             dispatch({ type: 'UPLOAD_SUCCESS' });
-
-            toast.success('Image Uploaded Successfully');
             setImage(data.secure_url);
-
+            toast.success('Slip uploaded. Press Submit Proof to send it.');
         } catch (err) {
             toast.error(getError(err));
             dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
         }
-        setAlready(true)
     };
 
     const submitHandler = async (e) => {
@@ -223,200 +226,280 @@ export default function OrderScreen() {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 }
             );
-            dispatch({
-                type: 'UPDATE_SUCCESS',
-            });
-            toast.success('Wait for confirmation from the seller');
+            dispatch({ type: 'UPDATE_SUCCESS' });
+            toast.success('Payment proof submitted. Waiting for verification.');
         } catch (err) {
             toast.error(getError(err));
             dispatch({ type: 'UPDATE_FAIL' });
         }
-
     };
 
-    return (
-        loading ? (
-            <LoadingBox></LoadingBox>
-        ) : error ? (
-            <MessageBox variant='danger'>{error}</MessageBox>
-        ) : (
-            <div>
-                <Helmet>
-                    <title>Order {orderId}</title>
-                </Helmet>
-                <h1 className="my-3">Order {orderId}</h1>
-                <Row>
-                    <Col md={8}>
-                        <Card className='mb-3'>
-                            <Card.Body>
-                                <Card.Title>Shipping</Card.Title>
-                                <Card.Text>
-                                    <strong>Name:</strong> {order.shippingAddress.fullName} <br />
-                                    <strong>Address: </strong> {order.shippingAddress.address}, {order.shippingAddress.phoneNumber}, {order.shippingAddress.district}, {order.shippingAddress.province}, {order.shippingAddress.postalCode}
-                                </Card.Text>
-                                {order.isDelivered && !order.isCanceled ? (
-                                    <MessageBox variant='success'>
-                                        Delivered at {order.deliveredAt}
-                                    </MessageBox>
-                                ) : !order.isDelivered && order.isCanceled ? (
-                                    <MessageBox variant='primary'>
-                                        Order is canceled at {order.canceledAt}
-                                    </MessageBox>
-                                ) : (
-                                    <MessageBox variant='danger'>
-                                        Not Delivered
-                                    </MessageBox>
-                                )}
-                            </Card.Body>
-                        </Card>
-                        <Card className="mb-3">
-                            <Card.Body>
-                                <Card.Title>
-                                    <strong>Method:</strong> {order.paymentMethod}
-                                </Card.Title>
-                                {!order.isUploaded && !order.isPaid && !order.isCanceled ? (
-                                    <MessageBox variant='danger'>Not Paid</MessageBox>
-                                ) : order.isUploaded && !order.isPaid && !order.isCanceled ? (
-                                    <MessageBox variant='warning'>Waiting for Confirmation</MessageBox>
-                                ) : !order.isPaid && order.isCanceled ? (
-                                    <MessageBox variant='primary'>Order is Canceled at {order.canceledAt} </MessageBox>
-                                ) : (
-                                    <MessageBox variant='success'>Paid at {order.paidAt}</MessageBox>
-                                )}
-                                <img
-                                    src='/images/qrcode.png'
-                                    alt='promptpay'
-                                    className='img-fluid center-image'>
-                                </img>
-                                <p className="centered-text">
-                                    <strong>KBank</strong><br />
-                                    <strong>Name: </strong>Example Example<br />
-                                    <strong>Bank account no.: </strong>xxx-x-xxxxx-x<br />
-                                    <strong>Mobile Number: </strong>0123456789
-                                </p>
-                                <Form onSubmit={submitHandler}>
-                                    <Form.Group className="mb-3" controlId="image">
-                                        <Form.Label>Image File</Form.Label>
-                                        <Form.Control
-                                            value={imageUploaded}
-                                            onChange={(e) => setImage(e.target.value)}
-                                            required
-                                            disabled
-                                        />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="imageFile">
-                                        <Form.Label>Upload File</Form.Label>
-                                        <Form.Control type="file" onChange={uploadFileHandler} disabled={order.isUploaded} />
-                                        {loadingUpload && <LoadingBox></LoadingBox>}
-                                    </Form.Group>
-                                    {!order.isUploaded && (
-                                        <div className="mb-3">
-                                            <Button disabled={!already} type="submit">
-                                                Upload
-                                            </Button>
-                                            {loadingUpdate && <LoadingBox></LoadingBox>}
-                                        </div>
-                                    )}
-                                </Form>
-                            </Card.Body>
-                        </Card>
-                        <Card className="mb-3">
-                            <Card.Body>
-                                <Card.Title>Items</Card.Title>
-                                <ListGroup variant="flush">
-                                    {order.orderItems.map((item) => (
-                                        <ListGroup.Item key={item._id}>
-                                            <Row className='align-items-center'>
-                                                <Col md={6}>
-                                                    <img
-                                                        src={item.image}
-                                                        alt={item.name}
-                                                        className='img-fluid rounded no-thumbnail-border img-thumbnail'
-                                                    ></img>{' '}
-                                                    <Link to={`/product/${item.slug}`}  style={{color: '#194d31', textDecoration: 'none', fontWeight: '600'}}>{item.name}</Link>
-                                                </Col>
-                                                <Col md={3}>
-                                                    <span>⨯{item.quantity}</span>
-                                                </Col>
-                                                <Col md={3}>฿{item.price}</Col>
-                                            </Row>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col md={4}>
-                        <Card className="mb-3">
-                            <Card.Body>
-                                <Card.Title>Order Summary</Card.Title>
-                                <ListGroup variant="flush">
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col>Items</Col>
-                                            <Col>฿{order.itemsPrice.toFixed(2)}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col>Shipping</Col>
-                                            <Col>฿{order.shippingPrice.toFixed(2)}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col>Order Total</Col>
-                                            <Col>฿{order.totalPrice.toFixed(2)}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                    {userInfo.isAdmin && order.isUploaded && !order.isPaid && !order.isDelivered && (
-                                        <ListGroup.Item>
-                                            {loadingUpdate && <LoadingBox></LoadingBox>}
-                                            <img
-                                                src={order.imageUploaded}
-                                                alt={order.uploadedAt}
-                                                className='img-fluid center-image'>
-                                            </img>
-                                        </ListGroup.Item>
-                                    )}
-                                    {userInfo.isAdmin && order.isUploaded && !order.isPaid && !order.isDelivered && !order.isCanceled && (
-                                        <ListGroup.Item>
-                                            {loadingUpdate && <LoadingBox></LoadingBox>}
-                                            <div className="d-grid order-lg" >
-                                                {loadingPay && <LoadingBox></LoadingBox>}
-                                                <Button type="button" onClick={paymentHandler}>
-                                                    Confirm Payment
-                                                </Button>
-                                            </div>
-                                        </ListGroup.Item>
-                                    )}
-                                     {userInfo.isAdmin && !order.isPaid && !order.isDelivered && !order.isCanceled && (
-                                        <ListGroup.Item>
-                                            {loadingUpdate && <LoadingBox></LoadingBox>}
-                                            <div className="d-grid">
-                                                {loadingCancel && <LoadingBox></LoadingBox>}
-                                                <Button type="button" onClick={cancelHandler}>
-                                                    Cancel Order
-                                                </Button>
-                                            </div>
-                                        </ListGroup.Item>
-                                    )}
-                                    {userInfo.isAdmin && order.isUploaded && order.isPaid && !order.isDelivered && !order.isCanceled && (
-                                        <ListGroup.Item>
-                                            {loadingDeliver && <LoadingBox></LoadingBox>}
-                                            <div className="d-grid">
-                                                <Button type="button" onClick={deliverOrderHandler}>
-                                                    Deliver Order
-                                                </Button>
-                                            </div>
-                                        </ListGroup.Item>
-                                    )}
-                                </ListGroup>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
+    const copyText = async (text, label) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            toast.success(`${label} copied`);
+        } catch {
+            toast.error('Copy failed');
+        }
+    };
+
+    const paymentLabel = order.isCanceled
+        ? 'Cancelled'
+        : order.isPaid
+            ? 'Paid'
+            : order.isUploaded
+                ? 'Proof Submitted'
+                : 'Payment Pending';
+
+    const paymentBg = order.isCanceled ? 'danger' : order.isPaid ? 'success' : 'warning';
+
+    const fulfillmentLabel = order.isCanceled
+        ? 'Cancelled'
+        : order.isDelivered
+            ? 'Delivered'
+            : 'Processing';
+
+    const fulfillmentBg = order.isCanceled ? 'danger' : order.isDelivered ? 'success' : 'info';
+
+    const cancellable = !order.isCanceled && !order.isPaid && !order.isDelivered;
+
+    const timeline = [
+        { date: order.createdAt, label: 'Order placed', done: true },
+        !order.isCanceled && !order.isPaid && { date: null, label: 'Awaiting payment', done: false },
+        order.isUploaded && { date: order.uploadedAt, label: 'Payment proof submitted', done: true },
+        order.isPaid && { date: order.paidAt, label: 'Payment confirmed', done: true },
+        order.isCanceled && { date: order.canceledAt, label: 'Order cancelled', done: true },
+        !order.isCanceled && !order.isDelivered && { date: null, label: 'Not shipped yet', done: false },
+        order.isDelivered && { date: order.deliveredAt, label: 'Delivered', done: true },
+    ].filter(Boolean);
+
+    return loading ? (
+        <div className="order-page">
+            <div className="dashboard-card">
+                <div className="skeleton" style={{ height: 24, width: '30%' }} />
+                <div className="skeleton mt-3" style={{ height: 120 }} />
+                <div className="skeleton mt-3" style={{ height: 160 }} />
             </div>
-        )
-    )
+        </div>
+    ) : error ? (
+        <div className="order-page">
+            <div className="dashboard-card">
+                <div className="auth-error" role="alert">Unable to load order details. {error}</div>
+                <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => window.location.reload()}>
+                    Try again
+                </button>
+            </div>
+        </div>
+    ) : (
+        <div className="order-page">
+            <Helmet>
+                <title>Order #{order._id?.slice(-6)}</title>
+            </Helmet>
+            <nav className="product-breadcrumb">
+                <Link to="/orderhistory">Orders</Link>
+                {' / '}
+                <span>#{order._id.slice(-6)}</span>
+            </nav>
+
+            <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
+                <div>
+                    <h1 className="page-title mb-0">Order #{order._id.slice(-6)}</h1>
+                    <p className="page-subtitle mb-0">Placed on {fullDate(order.createdAt)}</p>
+                </div>
+                <div className="d-flex gap-2 flex-wrap">
+                    <Badge bg={paymentBg}>{paymentLabel}</Badge>
+                    <Badge bg={fulfillmentBg}>{fulfillmentLabel}</Badge>
+                </div>
+            </div>
+
+            <Row className="g-4 mt-1">
+                <Col lg={7}>
+                    <div className="d-flex flex-column gap-3">
+                        <div className="dashboard-card">
+                            <h2 className="dashboard-card-title">Shipping Address</h2>
+                            <div className="order-address">
+                                <div>{order.shippingAddress.fullName}</div>
+                                <div>{order.shippingAddress.address}</div>
+                                <div>
+                                    {order.shippingAddress.district}, {order.shippingAddress.province}{' '}
+                                    {order.shippingAddress.postalCode}
+                                </div>
+                                <div className="text-muted small">{order.shippingAddress.phoneNumber}</div>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-card">
+                            <h2 className="dashboard-card-title">Items</h2>
+                            {order.orderItems.map((item) => (
+                                <div className="recent-order-row" key={item._id}>
+                                    <div className="d-flex align-items-center gap-3">
+                                        <img src={item.image} alt={item.name} className="product-thumb" />
+                                        <div>
+                                            <Link to={`/product/${item.slug}`} className="cart-item-name">
+                                                {item.name}
+                                            </Link>
+                                            <div className="cart-item-variant">
+                                                Qty {item.quantity} · {money(item.price)} each
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span className="price-column">{money(item.price * item.quantity)}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="dashboard-card">
+                            <h2 className="dashboard-card-title">Payment</h2>
+                            <div className="summary-row">
+                                <span className="text-muted">Method</span>
+                                <span>{order.paymentMethod}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="text-muted">Status</span>
+                                <span>{paymentLabel}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="text-muted">Amount</span>
+                                <span className="price-column">{money(order.totalPrice)}</span>
+                            </div>
+
+                            {!order.isPaid && !order.isCanceled && (
+                                <>
+                                    <hr className="soft-divider" />
+                                    <div className="text-center">
+                                        <div className="text-muted small mb-1">Amount to pay</div>
+                                        <div className="product-price-lg mb-2">{money(order.totalPrice)}</div>
+                                        <div className="text-muted small mb-2">Scan with your banking app</div>
+                                        <img
+                                            src="/images/qrcode.png"
+                                            alt="PromptPay QR code for this order"
+                                            className="img-fluid center-image"
+                                            style={{ maxWidth: 220 }}
+                                        />
+                                    </div>
+                                    <hr className="soft-divider" />
+                                    <div className="summary-row">
+                                        <span className="text-muted">PromptPay number</span>
+                                        <span>
+                                            012-345-6789{' '}
+                                            <Button
+                                                variant="light"
+                                                size="sm"
+                                                type="button"
+                                                onClick={() => copyText('0123456789', 'PromptPay number')}>
+                                                Copy
+                                            </Button>
+                                        </span>
+                                    </div>
+                                    <div className="summary-row">
+                                        <span className="text-muted">Account name</span>
+                                        <span>Example Example</span>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        {userInfo.isAdmin && order.isUploaded && (
+                            <div className="dashboard-card">
+                                <h2 className="dashboard-card-title">Payment Proof</h2>
+                                <img src={order.imageUploaded} alt="Payment slip" className="img-fluid rounded" />
+                                <div className="text-muted small mt-2">
+                                    Uploaded {order.uploadedAt ? fullDate(order.uploadedAt) : ''}
+                                </div>
+                            </div>
+                        )}
+
+                        {!order.isCanceled && !order.isPaid && userInfo && (
+                            <div className="dashboard-card">
+                                <h2 className="dashboard-card-title">Payment Proof</h2>
+                                <p className="page-subtitle mb-2">Upload your transfer slip after payment.</p>
+                                {order.isUploaded ? (
+                                    <div className="profile-success" role="status">
+                                        Payment proof submitted. Waiting for verification.
+                                    </div>
+                                ) : (
+                                    <Form onSubmit={submitHandler}>
+                                        <Form.Group controlId="slipFile" className="mb-2">
+                                            <Form.Label>Transfer slip</Form.Label>
+                                            <Form.Control type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadFileHandler} />
+                                        </Form.Group>
+                                        {loadingUpload && <LoadingBox></LoadingBox>}
+                                        {imageUploaded && (
+                                            <div className="mb-2">
+                                                <img src={imageUploaded} alt="Uploaded slip" className="img-fluid rounded" style={{ maxHeight: 200 }} />
+                                            </div>
+                                        )}
+                                        <div className="text-muted small mb-2">JPG, PNG or WebP. Max 5 MB.</div>
+                                        <Button
+                                            type="submit"
+                                            variant="primary"
+                                            className="btn-cta"
+                                            disabled={!imageUploaded || loadingUpdate}>
+                                            {loadingUpdate ? 'Submitting…' : 'Submit Proof'}
+                                        </Button>
+                                    </Form>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="dashboard-card">
+                            <h2 className="dashboard-card-title">Order Timeline</h2>
+                            {timeline.map((t, i) => (
+                                <div className="recent-order-row" key={i}>
+                                    <span>{t.label}</span>
+                                    <span className={t.done ? 'review-date' : 'cart-item-variant'}>
+                                        {t.date ? fullDate(t.date) : '—'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </Col>
+
+                <Col lg={5}>
+                    <div className="dashboard-card order-summary">
+                        <h2 className="dashboard-card-title">Order Summary</h2>
+                        <div className="summary-row">
+                            <span>Subtotal</span>
+                            <span>{money(order.itemsPrice)}</span>
+                        </div>
+                        <div className="summary-row">
+                            <span>Shipping</span>
+                            <span>{order.shippingPrice === 0 ? 'Free' : money(order.shippingPrice)}</span>
+                        </div>
+                        <hr className="soft-divider" />
+                        <div className="summary-row summary-total">
+                            <span>Total</span>
+                            <span>{money(order.totalPrice)}</span>
+                        </div>
+
+                        {userInfo.isAdmin && order.isUploaded && !order.isPaid && !order.isDelivered && !order.isCanceled && (
+                            <div className="d-grid mt-3">
+                                {loadingPay && <LoadingBox></LoadingBox>}
+                                <Button type="button" onClick={paymentHandler} className="btn-cta">
+                                    Mark as Paid
+                                </Button>
+                            </div>
+                        )}
+                        {userInfo.isAdmin && order.isPaid && !order.isDelivered && !order.isCanceled && (
+                            <div className="d-grid mt-3">
+                                {loadingDeliver && <LoadingBox></LoadingBox>}
+                                <Button type="button" variant="light" className="btn-cta" onClick={deliverOrderHandler}>
+                                    Mark as Delivered
+                                </Button>
+                            </div>
+                        )}
+                        {cancellable && (
+                            <div className="d-grid mt-3">
+                                {loadingCancel && <LoadingBox></LoadingBox>}
+                                <Button type="button" variant="light" className="btn-cta btn-cancel" onClick={cancelHandler}>
+                                    Cancel Order
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </Col>
+            </Row>
+        </div>
+    );
 }
