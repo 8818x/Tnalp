@@ -32,3 +32,6 @@ yarn-error.log*
 .playwright-mcp/
 home-after.png
 /*.png
+
+# local demo recording scripts
+demo/
