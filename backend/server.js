@@ -36,6 +36,10 @@ app.use(
     express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'uploads'))
 );
 
+// serve the built frontend (production single-service deployment)
+const frontendBuild = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'frontend', 'build');
+app.use(express.static(frontendBuild));
+
 app.use('/api/upload', uploadRouter);
 app.use('/api/seed', seedRouter);
 app.use('/api/products', productRouter);
@@ -44,6 +48,12 @@ app.use('/api/orders', orderRouter);
 
 app.use((err, req, res, next) => {
     res.status(500).send({ message: err.message });
+});
+
+// SPA fallback: any non-API GET serves the React app so client-side routes survive refresh
+app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) return next();
+    res.sendFile(path.join(frontendBuild, 'index.html'));
 });
 
 
