@@ -3,12 +3,27 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 export default function CheckoutSteps(props) {
+    const steps = [
+        { label: 'Sign in', done: props.step1 },
+        { label: 'Shipping', done: props.step2 },
+        { label: 'Payment', done: props.step3 },
+        { label: 'Place Order', done: props.step4 },
+    ];
+    // the last completed step is the current one; earlier steps show as done
+    let currentIdx = -1;
+    steps.forEach((s, i) => {
+        if (s.done) currentIdx = i;
+    });
     return (
-        <Row className='checkout-steps'>
-                <Col className={props.step1 ? 'active' : ''}>Sign in</Col>
-                <Col className={props.step2 ? 'active' : ''}>Shipping</Col>
-                <Col className={props.step3 ? 'active' : ''}>Payment</Col>
-                <Col className={props.step4 ? 'active' : ''}>Place Order</Col>
+        <Row className="checkout-steps">
+            {steps.map((s, i) => (
+                <Col
+                    key={s.label}
+                    className={i < currentIdx ? 'completed' : i === currentIdx ? 'current' : ''}>
+                    {i <= currentIdx ? '✓ ' : `${i + 1}. `}
+                    {s.label}
+                </Col>
+            ))}
         </Row>
-    )
+    );
 }

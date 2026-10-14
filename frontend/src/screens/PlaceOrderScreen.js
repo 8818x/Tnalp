@@ -3,15 +3,12 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import { Helmet } from 'react-helmet-async';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import ListGroup from 'react-bootstrap/ListGroup';
-import { Store } from '../Store';
 import { Link, useNavigate } from 'react-router-dom';
+import { Store } from '../Store';
 import { toast } from 'react-toastify';
 import { getError } from '../utils';
 import Axios from 'axios';
-import LoadingBox from '../components/LoadingBox';
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -24,23 +21,23 @@ const reducer = (state, action) => {
         default:
             return state;
     }
-}
+};
+
+const money = (n) => '฿' + Number(n || 0).toLocaleString('en-US');
+const roundNum = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
+
 export default function PlaceOrderScreen() {
     const navigate = useNavigate();
 
-    const [{ loading }, dispatch] = useReducer(reducer, {
-        loading: false,
-    });
+    const [{ loading }, dispatch] = useReducer(reducer, { loading: false });
 
     const { state, dispatch: ctxDispatch } = useContext(Store);
     const { cart, userInfo } = state;
 
-    const roundNum = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
-    cart.itemsPrice = roundNum(
-        cart.cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
-    );
-    cart.shippingPrice = cart.shippingAddress.province === 'Bangkok' ? roundNum(0) : roundNum(100);
-    cart.totalPrice = cart.itemsPrice + cart.shippingPrice;
+    const itemsPrice = roundNum(cart.cartItems.reduce((a, c) => a + c.quantity * c.price, 0));
+    const shippingPrice = cart.shippingAddress.province === 'Bangkok' ? roundNum(0) : roundNum(100);
+    const totalPrice = itemsPrice + shippingPrice;
+    const itemCount = cart.cartItems.reduce((a, c) => a + c.quantity, 0);
 
     const placeOrderHandler = async () => {
         try {
@@ -51,9 +48,9 @@ export default function PlaceOrderScreen() {
                     orderItems: cart.cartItems,
                     shippingAddress: cart.shippingAddress,
                     paymentMethod: cart.paymentMethod,
-                    itemsPrice: cart.itemsPrice,
-                    shippingPrice: cart.shippingPrice,
-                    totalPrice: cart.totalPrice,
+                    itemsPrice,
+                    shippingPrice,
+                    totalPrice,
                 },
                 {
                     headers: {
@@ -70,104 +67,134 @@ export default function PlaceOrderScreen() {
             toast.error(getError(err));
         }
     };
+
     useEffect(() => {
-        if (!cart.paymentMethod) {
-            navigate('/payment');
+        if (!cart.paymentMethod || cart.cartItems.length === 0) {
+            navigate('/cart');
         }
-    }, [cart, navigate])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cart, navigate]);
+
     return (
-        <div>
-            <CheckoutSteps step1 step2 step3 step4></CheckoutSteps>
+        <div className="checkout-content">
             <Helmet>
-                <title>Preview Order</title>
+                <title>Review Order</title>
             </Helmet>
-            <h1 className='my-3'>Preview Order</h1>
-            <Row>
-                <Col md={8}>
-                    <Card className='mb-3'>
-                        <Card.Body>
-                            <Card.Title>Shipping</Card.Title>
-                            <Card.Text>
-                                <b style={{ fontWeight: '500'}}>Name:</b> {cart.shippingAddress.fullName} <br />
-                                <b style={{ fontWeight: '500'}}>Phone Number:</b> {cart.shippingAddress.phoneNumber} <br />
-                                <b style={{ fontWeight: '500'}}>Address: </b> {cart.shippingAddress.address}, {cart.shippingAddress.district}, {cart.shippingAddress.province}, {cart.shippingAddress.postalCode}
-                            </Card.Text>
-                            <Link to='/shipping' style={{color: '#194d31', textDecoration: 'none', fontWeight: '700'}}>Edit</Link>
-                        </Card.Body>
-                    </Card>
-                    <Card className='mb-3'>
-                        <Card.Body>
-                            <Card.Title>Payment</Card.Title>
-                            <Card.Text>
-                                <b style={{ fontWeight: '500'}}>Method:</b> {cart.paymentMethod} <br />
-                            </Card.Text>
-                            <Link to='/payment' style={{color: '#194d31', textDecoration: 'none', fontWeight: '700'}}>Edit</Link>
-                        </Card.Body>
-                    </Card>
-                    <Card className='mb-3'>
-                        <Card.Body>
-                            <Card.Title>Items</Card.Title>
-                            <ListGroup variant='flush'>
-                                {cart.cartItems.map((item) => (
-                                    <ListGroup.Item key={item._id}>
-                                        <Row className='align-items-center'>
-                                            <Col md={6}>
-                                                <img src={item.image} alt={item.name}
-                                                    className='img-fluid rounded no-thumbnail-border img-thumbnail'>
-                                                </img>{' '}
-                                                <Link to={`/product/${item.slug}`} style={{color: '#194d31', textDecoration: 'none', fontWeight: '600'}}>{item.name}</Link>
-                                            </Col>
-                                            <Col md={3}>
-                                                <span>⨯ {item.quantity}</span>
-                                            </Col>
-                                            <Col md={3}>฿{item.price}</Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                ))}
-                            </ListGroup>
-                            <Link to='/cart' style={{color: '#194d31', textDecoration: 'none', fontWeight: '700'}}>Edit</Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col md={4}>
-                    <Card>
-                        <Card.Body>
-                            <Card.Title>Order Summary</Card.Title>
-                            <ListGroup variant='flush'>
-                                <ListGroup.Item>
-                                    <Row>
-                                        <Col>Items</Col>
-                                        <Col>฿{cart.itemsPrice.toFixed(2)}</Col>
-                                    </Row>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <Row>
-                                        <Col>Shipping</Col>
-                                        <Col>฿{cart.shippingPrice.toFixed(2)}</Col>
-                                    </Row>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <Row>
-                                        <Col>Order Total</Col>
-                                        <Col>฿{cart.totalPrice.toFixed(2)}</Col>
-                                    </Row>
-                                </ListGroup.Item>
-                                <ListGroup.Item>
-                                    <div className='d-grid'>
-                                        <Button
-                                            type='button'
-                                            onClick={placeOrderHandler}
-                                            disabled={cart.cartItems.length === 0}>
-                                            Place Order
-                                        </Button>
+            <CheckoutSteps step1 step2 step3 step4></CheckoutSteps>
+            <h1 className="page-title">Review Order</h1>
+            <p className="page-subtitle">Check your details before placing the order.</p>
+
+            <Row className="g-4">
+                <Col lg={8}>
+                    <div className="d-flex flex-column gap-3">
+                        <div className="dashboard-card">
+                            <div className="d-flex justify-content-between align-items-start">
+                                <h2 className="dashboard-card-title mb-0">Shipping Address</h2>
+                                <Link to="/shipping" className="continue-shopping" style={{ marginTop: 0 }}>
+                                    Change
+                                </Link>
+                            </div>
+                            <div className="order-address">
+                                <div>{cart.shippingAddress.fullName}</div>
+                                <div>{cart.shippingAddress.phoneNumber}</div>
+                                <div>{cart.shippingAddress.address}</div>
+                                <div>
+                                    {cart.shippingAddress.district}, {cart.shippingAddress.province}{' '}
+                                    {cart.shippingAddress.postalCode}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-card">
+                            <div className="d-flex justify-content-between align-items-start">
+                                <h2 className="dashboard-card-title mb-0">Payment</h2>
+                                <Link to="/payment" className="continue-shopping" style={{ marginTop: 0 }}>
+                                    Change
+                                </Link>
+                            </div>
+                            <div className="order-address">
+                                <div>{cart.paymentMethod}</div>
+                                <div className="cart-item-variant">
+                                    Scan a PromptPay QR code after placing the order.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-card">
+                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                <h2 className="dashboard-card-title mb-0">
+                                    Items ({itemCount})
+                                </h2>
+                                <Link to="/cart" className="continue-shopping" style={{ marginTop: 0 }}>
+                                    Change
+                                </Link>
+                            </div>
+                            {cart.cartItems.map((item) => (
+                                <div className="recent-order-row" key={item._id}>
+                                    <div className="d-flex align-items-center gap-3">
+                                        <img src={item.image} alt={item.name} className="product-thumb" />
+                                        <div>
+                                            <Link to={`/product/${item.slug}`} className="cart-item-name">
+                                                {item.name}
+                                            </Link>
+                                            <div className="cart-item-variant">
+                                                Qty {item.quantity} · {money(item.price)} each
+                                            </div>
+                                        </div>
                                     </div>
-                                    {loading && <LoadingBox></LoadingBox>}
-                                </ListGroup.Item>
-                            </ListGroup>
-                        </Card.Body>
-                    </Card>
+                                    <span className="price-column">{money(item.price * item.quantity)}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </Col>
+
+                <Col lg={4}>
+                    <div className="dashboard-card order-summary">
+                        <h2 className="dashboard-card-title">Order Summary</h2>
+                        <div className="text-muted small mb-2">{itemCount} item{itemCount === 1 ? '' : 's'}</div>
+                        <div className="summary-row">
+                            <span>Subtotal</span>
+                            <span>{money(itemsPrice)}</span>
+                        </div>
+                        <div className="summary-row">
+                            <span>Shipping</span>
+                            <span>
+                                {shippingPrice === 0 ? (
+                                    <>
+                                        Free
+                                        <div className="cart-item-variant">Orders in Bangkok ship free</div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {money(shippingPrice)}
+                                        <div className="cart-item-variant">Flat rate outside Bangkok</div>
+                                    </>
+                                )}
+                            </span>
+                        </div>
+                        <hr className="soft-divider" />
+                        <div className="summary-row summary-total">
+                            <span>Total</span>
+                            <span>{money(totalPrice)}</span>
+                        </div>
+                        <Button
+                            variant="primary"
+                            type="button"
+                            className="btn-cta mt-2"
+                            onClick={placeOrderHandler}
+                            disabled={loading || cart.cartItems.length === 0}>
+                            {loading ? 'Placing order…' : `Place Order · ${money(totalPrice)}`}
+                        </Button>
+                        <div className="text-muted small mt-2 text-center">
+                            After placing the order you will get a PromptPay QR to pay.
+                        </div>
+                        <div className="text-center">
+                            <Link to="/payment" className="continue-shopping">← Back to Payment</Link>
+                        </div>
+                    </div>
                 </Col>
             </Row>
         </div>
-    )
+    );
 }
